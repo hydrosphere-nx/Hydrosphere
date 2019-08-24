@@ -1,0 +1,37 @@
+# Copyright (c) 2019 Hydrosphère Developers
+#
+# Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+# http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+# <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
+# option. This file may not be copied, modified, or distributed
+# except according to those terms.
+
+[binaries]
+c = '/usr/bin/clang'
+cpp = '/usr/bin/clang++'
+ar = '/usr/bin/llvm-ar'
+as = '/usr/bin/llvm-mc'
+size = '/usr/bin/llvm-size'
+ld = '/usr/bin/llvm-ld.lld'
+objdump = '/usr/bin/llvm-objdump'
+strip = '/usr/bin/llvm-strip'
+
+[properties]
+sys_root = '/opt/hydrosphere'
+arch = 'aarch64'
+
+c_args = ['-target', 'aarch64-none-nx-hydrosphere', '-mtune=cortex-a57']
+cpp_args = ['-target', 'aarch64-none-nx-hydrosphere', '-mtune=cortex-a57']
+link_args = ['-target', 'aarch64-none-nx-hydrosphere', '-march=armv8-a', '-mtune=cortex-a57']
+hydrosphere_default_link_args = ['-fuse-ld=lld', '-Wl,-init=_init', '-Wl,-fini=_fini', '-Wl,-z,text', '-Wl,--build-id=sha1', '-Wl,--hash-style=sysv']
+hydrosphere_standalone_link_args = ['-nostdlib', '-nodefaultlibs', '-nostartfiles']
+
+[paths]
+prefix = '/opt/hydrosphere/usr/'
+libdir = 'lib/aarch64'
+
+[host_machine]
+system = 'nx'
+cpu_family = 'aarch64'
+cpu = 'armv8-a'
+endian = 'little'

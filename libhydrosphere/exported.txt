@@ -1,0 +1,6 @@
+{
+    local:
+        __nx_mod0;
+        __module_start;
+    global: *;
+};

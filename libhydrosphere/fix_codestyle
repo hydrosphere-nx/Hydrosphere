@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+# Copyright (c) 2019 Hydrosphère Developers
+#
+# Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+# http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+# <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
+# option. This file may not be copied, modified, or distributed
+# except according to those terms.
+
+import os
+
+extensions = (".cpp", ".c", ".h", ".hpp")
+code_style = "{BasedOnStyle: Google, IndentWidth: 4}"
+
+def format_dir(directory, style):
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith(extensions):
+                os.system("clang-format -i -style=\"" + style + "\" " + root + "/" + file)
+
+format_dir("source", code_style)
+format_dir("include", code_style)

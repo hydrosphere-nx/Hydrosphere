@@ -1,0 +1,17 @@
+/include
+/output
+/build
+/lib
+*.d
+*.a
+*.o
+*.so
+*.so.*
+*.obj
+*.elf
+*.nso
+*.nro
+*.kip
+*.hex
+*.tar
+*.tar.*

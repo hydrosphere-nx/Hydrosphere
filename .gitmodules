@@ -1,0 +1,6 @@
+[submodule "rt-builtins"]
+	path = rt-builtins
+	url = https://github.com/hydrosphere-nx/rt-builtins.git
+[submodule "rtld"]
+	path = rtld
+	url = https://github.com/hydrosphere-nx/rtld.git
