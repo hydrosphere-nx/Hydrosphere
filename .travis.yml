@@ -23,7 +23,7 @@ addons:
       - make
       - wget
       - tar
-
+      - doxygen
       
 install:
   - sudo pip3 install meson
@@ -110,3 +110,11 @@ install:
 
 script:
   - PATH="${TRAVIS_BUILD_DIR}/cmake/bin:$TRAVIS_BUILD_DIR:$PATH" HYDROSPHERE_SYSROOT="${TRAVIS_BUILD_DIR}/sysroot" make prepare-launch
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  local_dir: $TRAVIS_BUILD_DIR/sysroot/usr/share/doc/libhydrosphere/html
+  github_token: $GH_REPO_TOKEN
+  on:
+    branch: master
