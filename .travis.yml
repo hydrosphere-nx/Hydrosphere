@@ -109,4 +109,4 @@ install:
   - sudo rm -rf /usr/local/clang-7.0.0/
 
 script:
-  - sudo PATH="${TRAVIS_BUILD_DIR}/cmake/bin:$TRAVIS_BUILD_DIR:$PATH" HYDROSPHERE=/opt/hydrosphere make prepare-launch
+  - PATH="${TRAVIS_BUILD_DIR}/cmake/bin:$TRAVIS_BUILD_DIR:$PATH" HYDROSPHERE_SYSROOT="${TRAVIS_BUILD_DIR}/sysroot" make prepare-launch
