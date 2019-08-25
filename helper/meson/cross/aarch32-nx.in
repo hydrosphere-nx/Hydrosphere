@@ -17,7 +17,7 @@ objdump = '/usr/bin/llvm-objdump'
 strip = '/usr/bin/llvm-strip'
 
 [properties]
-sys_root = '/opt/hydrosphere'
+sys_root = '@SYSROOT@'
 arch = 'aarch32'
 
 c_args = ['-target', 'armv7l-none-nx-hydrosphere', '-mfloat-abi=hard', '-mtune=cortex-a57']
@@ -27,7 +27,7 @@ hydrosphere_default_link_args = ['-fuse-ld=lld', '-Wl,-init=_init', '-Wl,-fini=_
 hydrosphere_standalone_link_args = ['-nostdlib', '-nodefaultlibs', '-nostartfiles']
 
 [paths]
-prefix = '/opt/hydrosphere/usr/'
+prefix = '@SYSROOT@/usr'
 libdir = 'lib/aarch32'
 
 [host_machine]

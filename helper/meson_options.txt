@@ -1,0 +1,1 @@
+option('hydrosphere_sysroot', type: 'string', value: '/opt/hydrosphere', description: 'The sysroot to use for Hydrosphère')
