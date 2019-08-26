@@ -6,7 +6,7 @@
 # option. This file may not be copied, modified, or distributed
 # except according to those terms.
 
-# TODO(Kaenbyō): rewrite using meson to remvoe dependency on make
+# TODO(Kaenbyō): rewrite using meson to remove dependency on make
 ifeq ($(strip $(HYDROSPHERE_SYSROOT)),)
 $(error "Please set HYDROSPHERE_SYSROOT in your environment. export HYDROSPHERE_SYSROOT=<path to>/hydrosphere")
 endif
@@ -26,11 +26,11 @@ build-hydrosphere-aarch32: install-helpers install-builtins install-module-runti
 	ninja -C build/aarch32/libhydrosphere
 
 build-builtins-aarch64: install-helpers
-	meson setup rt-builtins build/aarch64/rt-builtins --cross-file $(HYDROSPHERE_SYSROOT)/usr/share/meson/cross/aarch64-nx
+	meson setup rt-builtins build/aarch64/rt-builtins --cross-file $(HYDROSPHERE_SYSROOT)/usr/share/meson/cross/aarch64-nx --buildtype=plain
 	ninja -C build/aarch64/rt-builtins
 
 build-builtins-aarch32: install-helpers
-	meson setup rt-builtins build/aarch32/rt-builtins --cross-file $(HYDROSPHERE_SYSROOT)/usr/share/meson/cross/aarch32-nx
+	meson setup rt-builtins build/aarch32/rt-builtins --cross-file $(HYDROSPHERE_SYSROOT)/usr/share/meson/cross/aarch32-nx --buildtype=plain
 	ninja -C build/aarch32/rt-builtins
 
 build-module-runtime-aarch64: install-helpers
