@@ -19,14 +19,14 @@
 namespace hs::os {
 /**
  * \short Critical Section implementation.
- * 
+ *
  * \remark CriticalSection ensures mutual exclusion of access.
  */
 class CriticalSection {
- private:
+   private:
     volatile _Atomic(uint_fast32_t) image;
 
- public:
+   public:
     /**
      * \short Enter the critical section.
      */
@@ -42,13 +42,14 @@ class CriticalSection {
      */
     void Leave() noexcept;
 
-   /**
-    * \short Returns true if the current thread owns the lock of the critical section.
-    */
+    /**
+     * \short Returns true if the current thread owns the lock of the critical
+     * section.
+     */
     bool IsLockedByCurrentThread() noexcept;
 };
 
 static_assert(hs::util::is_pod<CriticalSection>::value,
-"CriticalSection isn't pod");
+              "CriticalSection isn't pod");
 
 }  // namespace hs::os

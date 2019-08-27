@@ -16,20 +16,22 @@
 namespace hs::util {
 
 /**
- * \short default_intrusive_tag as defined in [P0406-r1](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0406r1.html#list)
+ * \short default_intrusive_tag as defined in
+ * [P0406-r1](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0406r1.html#list)
  */
 struct DefaultIntrusiveTag;
 
 /**
- * \short intrusive_list_element as defined in [P0406-r1](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0406r1.html#list)
+ * \short intrusive_list_element as defined in
+ * [P0406-r1](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0406r1.html#list)
  */
 template <class Tag = DefaultIntrusiveTag>
 class IntrusiveListElement {
- private:
+   private:
     IntrusiveListElement* prev;
     IntrusiveListElement* next;
 
- public:
+   public:
     IntrusiveListElement() {
         prev = this;
         next = this;
@@ -108,12 +110,13 @@ class IntrusiveListElement {
 };
 
 /**
- * \short Partial implementation of intrusive_list as defined in [P0406-r1](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0406r1.html#list)
+ * \short Partial implementation of intrusive_list as defined in
+ * [P0406-r1](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0406r1.html#list)
  * \remark This doesn't implement any methods related to the std namespace.
  */
 template <class T, class Tag = DefaultIntrusiveTag>
 class IntrusiveList {
- public:
+   public:
     __HS_DISALLOW_COPY(IntrusiveList);
 
     /**
@@ -127,7 +130,8 @@ class IntrusiveList {
     typedef value_type& reference;
 
     /**
-     * \short The type of a const reference to an element the iterator can point to.
+     * \short The type of a const reference to an element the iterator can point
+     * to.
      */
     typedef const value_type& const_reference;
 
@@ -140,7 +144,8 @@ class IntrusiveList {
     typedef int size_type;
 
     /**
-     * \short Type to express the result of subtracting one iterator from another.
+     * \short Type to express the result of subtracting one iterator from
+     * another.
      */
     typedef int difference_type;
     // We don't have the standard library.
@@ -149,7 +154,7 @@ class IntrusiveList {
 
     // Define iterators implementation
     class const_iterator {
-     public:
+       public:
         friend class iterator;
         friend class IntrusiveList;
 
@@ -201,12 +206,12 @@ class IntrusiveList {
             return value != target.value;
         }
 
-     private:
+       private:
         const_pointer value;
     };
 
     class iterator {
-     public:
+       public:
         friend class const_iterator;
         friend class IntrusiveList;
 
@@ -258,7 +263,7 @@ class IntrusiveList {
             return value != target.value;
         }
 
-     private:
+       private:
         pointer value;
     };
 
@@ -276,24 +281,28 @@ class IntrusiveList {
 
     // Iterators
     /**
-     * \short Returns an iterator pointing to the first element in the container.
+     * \short Returns an iterator pointing to the first element in the
+     * container.
      */
     iterator begin() noexcept { return iterator(root.GetNext()); }
 
     /**
-     * \short Returns an const_iterator pointing to the first element in the container.
+     * \short Returns an const_iterator pointing to the first element in the
+     * container.
      */
     const_iterator begin() const noexcept {
         return const_iterator(root.GetNext());
     }
 
     /**
-     * \short Returns an iterator referring to the past-the-end element in the container.
+     * \short Returns an iterator referring to the past-the-end element in the
+     * container.
      */
     iterator end() noexcept { return iterator(&root); }
 
     /**
-     * \short Returns an const_iterator referring to the past-the-end element in the container.
+     * \short Returns an const_iterator referring to the past-the-end element in
+     * the container.
      */
     const_iterator end() const noexcept { return const_iterator(&root); }
 
@@ -304,17 +313,21 @@ class IntrusiveList {
     const_reverse_iterator rend() const noexcept;*/
 
     /**
-     * \short Returns a const_iterator pointing to the first element in the container.
-     * 
-     * \warning If the container is empty, the returned iterator value shall not be dereferenced.
+     * \short Returns a const_iterator pointing to the first element in the
+     * container.
+     *
+     * \warning If the container is empty, the returned iterator value shall not
+     * be dereferenced.
      */
     const_iterator cbegin() const noexcept { return this->begin(); }
 
     /**
-     * \short Returns a const_iterator pointing to the past-the-end element in the container.
-     * 
-     * If the container is empty, this function returns the same as IntrusiveList::cbegin.
-     * \warning The value returned shall not be dereferenced.
+     * \short Returns a const_iterator pointing to the past-the-end element in
+     * the container.
+     *
+     * If the container is empty, this function returns the same as
+     * IntrusiveList::cbegin. \warning The value returned shall not be
+     * dereferenced.
      */
     const_iterator cend() const noexcept { return this->end(); }
     // We don't have the standard library.
@@ -341,8 +354,9 @@ class IntrusiveList {
     /**
      * \short Returns a reference to the first element in the container.
      *
-     * Unlike member IntrusiveList::begin, which returns an iterator to this same element, this function returns a direct reference.
-     * \warning Calling this function on an empty container causes undefined behavior.
+     * Unlike member IntrusiveList::begin, which returns an iterator to this
+     * same element, this function returns a direct reference. \warning Calling
+     * this function on an empty container causes undefined behavior.
      */
     reference front() noexcept {
         return IntrusiveListElement<Tag>::template GetElement<value_type>(
@@ -352,8 +366,9 @@ class IntrusiveList {
     /**
      * \short Returns a reference to the first element in the container.
      *
-     * Unlike member IntrusiveList::cbegin, which returns an iterator to this same element, this function returns a direct reference.
-     * \warning Calling this function on an empty container causes undefined behavior.
+     * Unlike member IntrusiveList::cbegin, which returns an iterator to this
+     * same element, this function returns a direct reference. \warning Calling
+     * this function on an empty container causes undefined behavior.
      */
     const_reference front() const noexcept {
         return IntrusiveListElement<Tag>::template GetElement<value_type>(
@@ -363,8 +378,9 @@ class IntrusiveList {
     /**
      * \short Returns a reference to the last element in the container.
      *
-     * Unlike member IntrusiveList::cbegin, which returns an iterator to this same element, this function returns a direct reference.
-     * \warning Calling this function on an empty container causes undefined behavior.
+     * Unlike member IntrusiveList::cbegin, which returns an iterator to this
+     * same element, this function returns a direct reference. \warning Calling
+     * this function on an empty container causes undefined behavior.
      */
     reference back() noexcept {
         return IntrusiveListElement<Tag>::template GetElement<value_type>(
@@ -374,8 +390,9 @@ class IntrusiveList {
     /**
      * \short Returns a reference to the last element in the container.
      *
-     * Unlike member IntrusiveList::cbegin, which returns an iterator to this same element, this function returns a direct reference.
-     * \warning Calling this function on an empty container causes undefined behavior.
+     * Unlike member IntrusiveList::cbegin, which returns an iterator to this
+     * same element, this function returns a direct reference. \warning Calling
+     * this function on an empty container causes undefined behavior.
      */
     const_reference back() const noexcept {
         return IntrusiveListElement<Tag>::template GetElement<value_type>(
@@ -383,31 +400,37 @@ class IntrusiveList {
     }
 
     /**
-     * \short Adds a new element at the start of the container after its current first element.
-     * 
+     * \short Adds a new element at the start of the container after its current
+     * first element.
+     *
      * \remark This effectively increases the container size by one.
      */
     void push_front(T& x) noexcept { this->root.LinkNext(&x); }
 
     /**
-     * \short Adds a new element at the end of the container after its current last element.
-     * 
+     * \short Adds a new element at the end of the container after its current
+     * last element.
+     *
      * \remark This effectively increases the container size by one.
      */
     void push_back(T& x) noexcept { this->root.LinkPrev(&x); }
 
     /**
-     * \short Removes the last element in the container, effectively reducing the container size by one.
+     * \short Removes the last element in the container, effectively reducing
+     * the container size by one.
      */
     void pop_back() noexcept { this->root.GetPrev()->Unlink(); }
 
     /**
-     * \short Removes the first element in the container, effectively reducing the container size by one.
+     * \short Removes the first element in the container, effectively reducing
+     * the container size by one.
      */
     void pop_front() noexcept { this->root.GetNext()->Unlink(); }
 
     /**
-     * \short The container is extended by inserting new elements before the element at the specified position, effectively increasing the container size by the number of elements inserted.
+     * \short The container is extended by inserting new elements before the
+     * element at the specified position, effectively increasing the container
+     * size by the number of elements inserted.
      */
     iterator insert(const_iterator position, T& x) noexcept {
         T* ref = const_cast<T*>(position.value);
@@ -431,7 +454,8 @@ class IntrusiveList {
 
     /**
      * \short Removes from the container a range of elements. ([first,last))
-     * \remark This effectively reduces the container size by the number of elements removed.
+     * \remark This effectively reduces the container size by the number of
+     * elements removed.
      */
     iterator erase(const_iterator position, const_iterator last) noexcept {
         if (position == last) {
@@ -445,7 +469,8 @@ class IntrusiveList {
     // void swap(IntrusiveList&) noexcept;
 
     /**
-     * \short Removes all elements from the container, leaving the container with a size of 0.
+     * \short Removes all elements from the container, leaving the container
+     * with a size of 0.
      */
     void clear() noexcept {
         while (!this->empty()) {
@@ -478,7 +503,7 @@ class IntrusiveList {
     template <class Compare> void sort(Compare comp);
 
     void reverse() noexcept;*/
- private:
+   private:
     IntrusiveListElement<Tag> root;
 };
 }  // namespace hs::util

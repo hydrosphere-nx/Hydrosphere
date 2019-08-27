@@ -21,14 +21,14 @@ namespace svc {
  * \short Opaque type representing an Horizon Handle.
  */
 class Handle {
- private:
+   private:
     /**
      * \private
      * \short The raw handle value.
      */
     uint32_t value;
 
- public:
+   public:
     /**
      * \short Returns the raw handle value stored inside Handle.
      */
@@ -57,7 +57,6 @@ class Handle {
 } __HS_ATTRIBUTE_PACKED;
 
 static_assert(hs::util::is_pod<Handle>::value, "Handle isn't pod");
-
 
 inline bool operator==(Handle a, Handle b) noexcept {
     return a.GetValue() == b.GetValue();

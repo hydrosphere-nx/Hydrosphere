@@ -13,8 +13,8 @@
 
 // We define memcpy as we don't have any libraries that can provide it.
 // If there is any, as this is weak, it's going to be discared.
-extern "C" __HS_ATTRIBUTE_WEAK void *memcpy(
-    void *dst, const void *src, size_t len) {
+extern "C" __HS_ATTRIBUTE_WEAK void *memcpy(void *dst, const void *src,
+                                            size_t len) {
     const char *from = (const char *)src;
     char *to = reinterpret_cast<char *>(dst);
 
@@ -22,8 +22,7 @@ extern "C" __HS_ATTRIBUTE_WEAK void *memcpy(
     return dst;
 }
 
-extern "C" __HS_ATTRIBUTE_WEAK void *memset(
-    void *s, int c, size_t n) {
+extern "C" __HS_ATTRIBUTE_WEAK void *memset(void *s, int c, size_t n) {
     unsigned char *p = reinterpret_cast<unsigned char *>(s);
     while (n--) *p++ = (unsigned char)c;
     return s;

@@ -14,21 +14,23 @@
 
 namespace hs::util {
 /**
- * \short Obtains a POD type suitable to use as storage for an object of a size of at most Len bytes, aligned as specified by Align.
- * 
+ * \short Obtains a POD type suitable to use as storage for an object of a size
+ * of at most Len bytes, aligned as specified by Align.
+ *
  * The obtained type is aliased as member type aligned_storage::type.
- * 
+ *
  * \tparam Len The size of the storage object in bytes.
  * \tparam Align The alignment requested in bytes.
- * 
+ *
  * \pre Len shall not be zero.
- * 
+ *
  * \remark This is identical to libcxx's aligned_storage.
  */
 template <size_t Len, size_t Align = sizeof(size_t)>
 struct aligned_storage {
     /**
-     * \short A POD type suitable to store Len bytes, aligned as specified by Align.
+     * \short A POD type suitable to store Len bytes, aligned as specified by
+     * Align.
      */
     struct type {
         alignas(Align) unsigned char data[Len];
@@ -76,7 +78,6 @@ struct ObjectStorage {
     }
 
     inline T &operator*() noexcept { return Get(); }
-
 
     inline T *operator->() noexcept { return GetPointer(); }
 };

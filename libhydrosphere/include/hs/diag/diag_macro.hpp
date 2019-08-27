@@ -22,34 +22,37 @@
 
 /**
  * \def __HS_ABORT_CONDITIONAL(condition, ...)
- * \short Calls hs::diag::Abort with a given formatable message if the condition evaluates to false.
- * \remark The formatable message is striped out in release builds.
-*/
+ * \short Calls hs::diag::Abort with a given formatable message if the condition
+ * evaluates to false. \remark The formatable message is striped out in release
+ * builds.
+ */
 
 /**
  * \def __HS_DEBUG_ASSERT(condition)
- * \short Calls hs::diag::Abort if the condition evaluates to false in debug builds.
-*/
+ * \short Calls hs::diag::Abort if the condition evaluates to false in debug
+ * builds.
+ */
 
 /**
  * \def __HS_ABORT()
  * \short Unconditionally calls hs::diag::Abort.
-*/
+ */
 
 /**
  * \def __HS_ASSERT(condition)
  * \short Calls hs::diag::Abort if the condition evaluates to false.
-*/
+ */
 
 /**
  * \def __HS_ABORT_UNLESS_NOT_NULL(ptr)
  * \short Calls hs::diag::Abort if the given ptr is null.
-*/
+ */
 
 /**
  * \def __HS_ABORT_CONDITIONAL_RESULT(condition, result)
- * \short Calls hs::diag::Abort with a given result if the condition evaluates to false.
-*/
+ * \short Calls hs::diag::Abort with a given result if the condition evaluates
+ * to false.
+ */
 
 #ifdef HYDROSPHERE_DEBUG_DIAG
 #define __HS_ABORT_CONDITIONAL(condition, ...)                                 \
@@ -65,14 +68,12 @@
 #define __HS_DEBUG_ASSERT(condition, ...)
 #endif
 
-#define __HS_ABORT() \
-    __HS_ABORT_CONDITIONAL(false, "Unknown Hydrosphere abort")
+#define __HS_ABORT() __HS_ABORT_CONDITIONAL(false, "Unknown Hydrosphere abort")
 #define __HS_ASSERT(condition) \
     __HS_ABORT_CONDITIONAL(condition, "Assertion failed")
-#define __HS_ABORT_UNLESS_NOT_NULL(ptr) \
-    __HS_ASSERT(ptr != nullptr)
+#define __HS_ABORT_UNLESS_NOT_NULL(ptr) __HS_ASSERT(ptr != nullptr)
 
-#define __HS_ABORT_CONDITIONAL_RESULT(condition, result)      \
+#define __HS_ABORT_CONDITIONAL_RESULT(condition, result) \
     __HS_ABORT_CONDITIONAL(condition, &result, "Assertion failed")
 
 /**

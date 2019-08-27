@@ -29,7 +29,7 @@ namespace hs::os {
 
 /**
  * \short This is the context of a user event.
- * 
+ *
  * See \ref user_event_api "User Event API" for usages.
  **/
 struct UserEvent {
@@ -53,7 +53,8 @@ struct UserEvent {
 
     /**
      * \private
-     * \short True if the UserEvent must be automatically cleared after a wait operation.
+     * \short True if the UserEvent must be automatically cleared after a wait
+     * operation.
      */
     bool is_auto_clear;
 
@@ -77,8 +78,9 @@ static_assert(hs::util::is_pod<UserEvent>::value, "UserEvent isn't pod");
  * \short Create a UserEvent.
  *
  * \param[in] event A pointer to a UserEvent.
- * \param[in] is_signaled_at_init True if the UserEvent must be automatically signaled after the initialization.
- * \param[in] is_auto_clear True if the UserEvent must be automatically cleared after a wait operation.
+ * \param[in] is_signaled_at_init True if the UserEvent must be automatically
+ * signaled after the initialization. \param[in] is_auto_clear True if the
+ * UserEvent must be automatically cleared after a wait operation.
  *
  * \pre ``event`` is uninitialized.
  * \post ``event`` is initialized.
@@ -97,7 +99,7 @@ void WaitUserEvent(UserEvent *event) noexcept;
 
 /**
  * \short Get the signal state of a UserEvent.
- * 
+ *
  * \param[in] event A pointer to a UserEvent.
  * \pre ``event`` is initialized.
  * \return true if the ``event`` has been signaled.

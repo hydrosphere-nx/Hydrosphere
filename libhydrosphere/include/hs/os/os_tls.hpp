@@ -23,7 +23,7 @@ namespace hs::os {
  * \private
  */
 class ThreadLocalStorage {
- public:
+   public:
     /**
      * The IPC command buffer.
      */
@@ -34,7 +34,6 @@ class ThreadLocalStorage {
      * Get a pointer to the thread local storage of the current thread.
      */
     static ThreadLocalStorage *GetThreadLocalStorage() noexcept;
-
 
     /**
      * Get the thread context of the current thread.
@@ -48,7 +47,7 @@ class ThreadLocalStorage {
         this->context = thread_context;
     }
 
- private:
+   private:
     /**
      * The thread context attached to this TLS storage.
      */

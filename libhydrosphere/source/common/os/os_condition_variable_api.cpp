@@ -31,8 +31,9 @@ void BroadcastConditionVariable(ConditionVariable *condvar) noexcept {
     condvar->condition_variable.Broadcast();
 }
 
-ConditionVariableStatus WaitTimeoutConditionVariable(
-    ConditionVariable *condvar, Mutex *mutex, int64_t timeout) noexcept {
+ConditionVariableStatus WaitTimeoutConditionVariable(ConditionVariable *condvar,
+                                                     Mutex *mutex,
+                                                     int64_t timeout) noexcept {
     if (!condvar->condition_variable.WaitTimeout(&mutex->critical_section,
                                                  timeout)) {
         return ConditionVariableStatus::TimeOut;
@@ -41,8 +42,7 @@ ConditionVariableStatus WaitTimeoutConditionVariable(
     return ConditionVariableStatus::NoTimeOut;
 }
 
-void WaitConditionVariable(ConditionVariable *condvar,
-                           Mutex *mutex) noexcept {
+void WaitConditionVariable(ConditionVariable *condvar, Mutex *mutex) noexcept {
     condvar->condition_variable.Wait(&mutex->critical_section);
 }
 

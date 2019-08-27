@@ -75,7 +75,7 @@ __HS_ATTRIBUTE_VISIBILITY_HIDDEN hs::Result CreateThreadUnsafe(
             &thread_handle, reinterpret_cast<uintptr_t>(entry_point),
             reinterpret_cast<uintptr_t>(thread),
             reinterpret_cast<uintptr_t>(thread->mapped_thread_stack) +
-            thread->thread_stack_size,
+                thread->thread_stack_size,
             thread->priority, cpuid);
         if (result.Ok()) {
             thread->thread_handle = thread_handle;
@@ -162,8 +162,7 @@ hs::Result CreateThread(Thread *thread,
             reinterpret_cast<uintptr_t>(thread->mapped_thread_stack),
             reinterpret_cast<uintptr_t>(thread->original_thread_stack),
             thread->thread_stack_size);
-        hs::os::detail::g_StackAllocator->Free(
-            thread->mapped_thread_stack);
+        hs::os::detail::g_StackAllocator->Free(thread->mapped_thread_stack);
     }
 
     // TODO(Kaenbyō): incremental thread name (with the number of the thread)
@@ -206,8 +205,7 @@ void DestroyThread(Thread *thread) noexcept {
             reinterpret_cast<uintptr_t>(thread->mapped_thread_stack),
             reinterpret_cast<uintptr_t>(thread->original_thread_stack),
             thread->thread_stack_size);
-        hs::os::detail::g_StackAllocator->Free(
-            thread->mapped_thread_stack);
+        hs::os::detail::g_StackAllocator->Free(thread->mapped_thread_stack);
         thread->is_alias_thread_stack_mapped = false;
         thread->mapped_thread_stack = nullptr;
     }
@@ -241,8 +239,7 @@ void WaitThread(Thread *thread) noexcept {
             reinterpret_cast<uintptr_t>(thread->mapped_thread_stack),
             reinterpret_cast<uintptr_t>(thread->original_thread_stack),
             thread->thread_stack_size);
-        hs::os::detail::g_StackAllocator->Free(
-            thread->mapped_thread_stack);
+        hs::os::detail::g_StackAllocator->Free(thread->mapped_thread_stack);
         thread->is_alias_thread_stack_mapped = false;
         thread->mapped_thread_stack = nullptr;
     }

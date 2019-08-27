@@ -18,12 +18,10 @@ enum KernelEventState {
 
 namespace hs::os {
 
-hs::Result CreateKernelEvent(KernelEvent *event,
-                             bool is_auto_clear) noexcept {
+hs::Result CreateKernelEvent(KernelEvent *event, bool is_auto_clear) noexcept {
     svc::Handle readable_handle;
     svc::Handle writable_handle;
-    auto result =
-        hs::svc::CreateEvent(&writable_handle, &readable_handle);
+    auto result = hs::svc::CreateEvent(&writable_handle, &readable_handle);
     if (result.Ok()) {
         event->state = KernelEventState_Initialized;
 
@@ -48,8 +46,9 @@ void WaitKernelEvent(KernelEvent *event) noexcept {
     int32_t index;
 
     // Wait for the event to be signaled
-    while (hs::svc::WaitSynchronization(&index,
-                event->readable_handle.GetValuePointer(), 1, -1).Err()) {
+    while (hs::svc::WaitSynchronization(
+               &index, event->readable_handle.GetValuePointer(), 1, -1)
+               .Err()) {
     }
 
     if (event->is_auto_clear) {

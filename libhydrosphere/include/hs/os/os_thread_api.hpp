@@ -43,7 +43,8 @@ const size_t THREAD_NAME_SIZE = 0x20;
  */
 enum class ThreadState {
     /**
-     * \short The Thread is uninitialized and can be initialized by using hs::os::CreateThread.
+     * \short The Thread is uninitialized and can be initialized by using
+     * hs::os::CreateThread.
      */
     Uninitialized,
     /**
@@ -66,7 +67,7 @@ enum class ThreadState {
 
 /**
  * \short This is the context of a thread.
- * 
+ *
  * See \ref thread_api "Thread API" for usages.
  **/
 struct Thread : public hs::util::IntrusiveListElement<> {
@@ -108,13 +109,15 @@ struct Thread : public hs::util::IntrusiveListElement<> {
 
     /**
      * \private
-     * \short The memory mirror of the ``original_thread_stack`` mapped in the Stack region.
+     * \short The memory mirror of the ``original_thread_stack`` mapped in the
+     * Stack region.
      */
     void *mapped_thread_stack;
 
     /**
      * \private
-     * \short True if the ``original_thread_stack`` is mapped in the Stack region.
+     * \short True if the ``original_thread_stack`` is mapped in the Stack
+     * region.
      */
     bool is_alias_thread_stack_mapped;
 
@@ -148,11 +151,14 @@ struct Thread : public hs::util::IntrusiveListElement<> {
  *
  * \param[in] thread A pointer to a Thread.
  * \param[in] thread_entrypoint The entrypoint of the Thread.
- * \param[in] argument The argument to pass to the entrypoint when starting the Thread.
- * \param[in] stack A pointer to a memory region that will be used as a stack by the Thread.
- * \param[in] stack_size The size of the stack (must be page aligned).
- * \param[in] priority The priority of the Thread (0x2C is the usual priority of the main thread. 0x3B on core 0 to 2 and 0x3F on core 3 is a special priority that enables preemptive multithreading).
- * \param[in] cpuid The ID of the CPU core to use (-2 means the default core of the current process).
+ * \param[in] argument The argument to pass to the entrypoint when starting the
+ * Thread. \param[in] stack A pointer to a memory region that will be used as a
+ * stack by the Thread. \param[in] stack_size The size of the stack (must be
+ * page aligned). \param[in] priority The priority of the Thread (0x2C is the
+ * usual priority of the main thread. 0x3B on core 0 to 2 and 0x3F on core 3 is
+ * a special priority that enables preemptive multithreading). \param[in] cpuid
+ * The ID of the CPU core to use (-2 means the default core of the current
+ * process).
  *
  * \pre ``thread`` state is ThreadState::Uninitialized.
  * \pre ``thread_entrypoint`` is not a null pointer.
@@ -173,8 +179,10 @@ hs::Result CreateThread(Thread *thread,
  *
  * This function has the following behaviours:
  *
- * - If the ``thread`` state is ThreadState::Initialized, the thread is started and signaled as ThreadState::Destroyed (The thread will imediately exit).
- * - It waits for the Thread to exit and ensures that the Thread stack mirror is unmapped if needed.
+ * - If the ``thread`` state is ThreadState::Initialized, the thread is started
+ * and signaled as ThreadState::Destroyed (The thread will imediately exit).
+ * - It waits for the Thread to exit and ensures that the Thread stack mirror is
+ * unmapped if needed.
  *
  * \param[in] thread A pointer to a Thread.
  * \pre ``thread`` state is **not** ThreadState::Uninitialized.
@@ -203,7 +211,8 @@ void WaitThread(Thread *thread) noexcept;
 /**
  * \short Yield to other threads.
  *
- * This gives a hint to the scheduler that the current thread is willing to yield its current use of a CPU core.
+ * This gives a hint to the scheduler that the current thread is willing to
+ * yield its current use of a CPU core.
  */
 void YieldThread(void) noexcept;
 
@@ -228,7 +237,7 @@ Thread *GetCurrentThread(void) noexcept;
 
 /**
  * \short Change a Thread priority.
- * 
+ *
  * This return the previous thread priority.
  * \pre ``thread`` state is **not** ThreadState::Uninitialized.
  * \post ``thread`` priority is now ``priority``.
@@ -241,7 +250,6 @@ int ChangeThreadPriority(Thread *thread, int priority) noexcept;
  * \pre ``thread`` state is **not** ThreadState::Uninitialized.
  */
 int GetOriginalThreadPriority(Thread *thread) noexcept;
-
 
 /**
  * \short Get the current Thread priority.
