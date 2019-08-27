@@ -15,6 +15,25 @@ hydrosphere_datadir = join_paths(hydrosphere_prefix, 'share')
 cdata = configuration_data()
 cdata.set('SYSROOT', get_option('hydrosphere_sysroot'))
 
+
+is_mingw64 = host_machine.system().startswith('windows')
+
+# If we found a MINGW64 toolchain, we hardcode /mingw64
+if is_mingw64
+
+    # As the toolchain can be everywhere, we need to convert the path to a mixed path with cygpath
+
+    cygpath = find_program('cygpath')
+
+    command_result = run_command(cygpath, ['--path', '--mixed', '/mingw64'])
+
+    mingw64_install_prefix = command_result.stdout().strip()
+
+    cdata.set('LLVM_INSTALL_PREFIX', mingw64_install_prefix)
+else
+    cdata.set('LLVM_INSTALL_PREFIX', get_option('llvm_install_prefix'))
+endif
+
 datadir = join_paths(hydrosphere_datadir, 'meson', 'cross')
 
 

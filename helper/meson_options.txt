@@ -1,1 +1,2 @@
 option('hydrosphere_sysroot', type: 'string', value: '/opt/hydrosphere', description: 'The sysroot to use for Hydrosphère')
+option('llvm_install_prefix', type: 'string', value: '/usr', description: 'The install prefix of the LLVM toolchain')
