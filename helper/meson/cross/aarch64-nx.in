@@ -20,9 +20,9 @@ strip = '@LLVM_INSTALL_PREFIX@/bin/llvm-strip'
 sys_root = '@SYSROOT@'
 arch = 'aarch64'
 
-c_args = ['-target', 'aarch64-none-nx-hydrosphere', '-mtune=cortex-a57']
-cpp_args = ['-target', 'aarch64-none-nx-hydrosphere', '-mtune=cortex-a57']
-link_args = ['-target', 'aarch64-none-nx-hydrosphere', '-march=armv8-a', '-mtune=cortex-a57']
+c_args = ['-fPIC', '-target', 'aarch64-none-nx-hydrosphere', '-mtune=cortex-a57']
+cpp_args = ['-fPIC', '-target', 'aarch64-none-nx-hydrosphere', '-mtune=cortex-a57']
+link_args = ['-target', 'aarch64-none-linux-gnu', '-march=armv8-a', '-mtune=cortex-a57']
 hydrosphere_default_link_args = ['-fuse-ld=lld', '-Wl,-init=_init', '-Wl,-fini=_fini', '-Wl,-z,text', '-Wl,--build-id=sha1', '-Wl,--hash-style=sysv']
 hydrosphere_standalone_link_args = ['-nostdlib', '-nodefaultlibs', '-nostartfiles']
 
