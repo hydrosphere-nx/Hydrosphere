@@ -20,6 +20,7 @@ assert(meson.is_cross_build(), 'This project is supposed to be cross compiled.')
 
 common_sources = [
     'source/common/compiler/memcpy.cpp',
+    'source/common/compiler/shared_ptr.cpp',
     'source/common/compiler/unique_ptr.cpp',
     'source/common/diag/diag_api.cpp',
     'source/common/init/initialization.cpp',
