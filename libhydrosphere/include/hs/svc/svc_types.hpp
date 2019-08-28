@@ -112,6 +112,8 @@ enum class InterruptType {
 
 // TODO(Kaenbyō): populate this
 enum class InfoType {
+    HeapRegionBaseAddr = 4,
+    HeapRegionSize = 5,
     AddressSpaceBase = 12,
     AddressSpaceSize = 13,
     StackRegionBase = 14,

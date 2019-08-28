@@ -19,6 +19,7 @@ assert(cc.get_id() == 'clang', 'This project only support the Clang compiler.')
 assert(meson.is_cross_build(), 'This project is supposed to be cross compiled.')
 
 common_sources = [
+    'source/common/compiler/allocator.cpp',
     'source/common/compiler/memcpy.cpp',
     'source/common/compiler/shared_ptr.cpp',
     'source/common/compiler/unique_ptr.cpp',
