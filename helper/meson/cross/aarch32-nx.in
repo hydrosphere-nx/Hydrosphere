@@ -7,14 +7,14 @@
 # except according to those terms.
 
 [binaries]
-c = '@LLVM_INSTALL_PREFIX@/bin/clang'
-cpp = '@LLVM_INSTALL_PREFIX@/bin/clang++'
-ar = '@LLVM_INSTALL_PREFIX@/bin/llvm-ar'
-as = '@LLVM_INSTALL_PREFIX@/bin/llvm-mc'
-size = '@LLVM_INSTALL_PREFIX@/bin/llvm-size'
-ld = '@LLVM_INSTALL_PREFIX@/bin/llvm-ld.lld'
-objdump = '@LLVM_INSTALL_PREFIX@/bin/llvm-objdump'
-strip = '@LLVM_INSTALL_PREFIX@/bin/llvm-strip'
+c = '@LLVM_INSTALL_PREFIX@/bin/clang@LLVM_SUFFIX@'
+cpp = '@LLVM_INSTALL_PREFIX@/bin/clang++@LLVM_SUFFIX@'
+ar = '@LLVM_INSTALL_PREFIX@/bin/llvm-ar@LLVM_SUFFIX@'
+as = '@LLVM_INSTALL_PREFIX@/bin/llvm-mc@LLVM_SUFFIX@'
+size = '@LLVM_INSTALL_PREFIX@/bin/llvm-size@LLVM_SUFFIX@'
+ld = '@LLVM_INSTALL_PREFIX@/bin/llvm-ld.lld@LLVM_SUFFIX@'
+objdump = '@LLVM_INSTALL_PREFIX@/bin/llvm-objdump@LLVM_SUFFIX@'
+strip = '@LLVM_INSTALL_PREFIX@/bin/llvm-strip@LLVM_SUFFIX@'
 
 [properties]
 sys_root = '@SYSROOT@'

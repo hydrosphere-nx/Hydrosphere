@@ -39,11 +39,15 @@ Hydrosphère is a work in progress C++ toolchain targeting the Nintendo Switch u
     $ export HYDROSPHERE_SYSROOT=<path to your sysroot>
     ```
 
-4. Build and deploy Hydrosphère to ``$HYDROSPHERE_SYSROOT``:
+5. Build and deploy Hydrosphère to ``$HYDROSPHERE_SYSROOT``:
 
     ```sh
     $ make deploy
     ```
+    **NOTE**:
+        - On Debian based distributions, LLVM official packages use a postfix on every binaries. To provide this postfix to Hydrosphère build system, set ``HYDROSPHERE_LLVM_SUFFIX`` environment variable to the appropriate suffix. (e.g: ``export HYDROSPHERE_LLVM_SUFFIX="-8"`` for llvm-8)
+        - If your LLVM installation prefix isn't ``/usr``, you can set the ``HYDROSPHERE_LLVM_INSTALL_PREFIX`` environment variable to the appropriate prefix to provide it to Hydrosphère build system.
+
 
 ### Building on Windows (MINGW64)
 1. Install [MSYS2](https://www.msys2.org/)
