@@ -6,7 +6,7 @@
     />
 </p>
 
-# Hydrosphère [![Travis Build](https://img.shields.io/travis/com/hydrosphere-nx/Hydrosphere.svg?logo=travis)](https://travis-ci.com/hydrosphere-nx/Hydrosphere)
+# Hydrosphère [![Travis Build](https://img.shields.io/travis/com/hydrosphere-nx/Hydrosphere.svg?logo=travis)](https://travis-ci.com/hydrosphere-nx/Hydrosphere) [![Discord](https://img.shields.io/discord/616355729435000876.svg)](https://discord.gg/FEXcV3h)
 "Ocean beyond the Horizon"
 
 Hydrosphère is a work in progress C++ toolchain targeting the Nintendo Switch userland.
