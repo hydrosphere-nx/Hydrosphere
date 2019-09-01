@@ -33,9 +33,6 @@ install:
   - wget https://github.com/MegatonHammer/linkle/releases/download/$LINKLE_VERSION/linkle-$LINKLE_VERSION-x86_64-unknown-linux-musl.tar.gz
   - tar -xvf linkle-$LINKLE_VERSION-x86_64-unknown-linux-musl.tar.gz
 
-  # Because Travis ship with an old version of llvm, we remove it to avoid conflicts...
-  - sudo rm -rf /usr/local/clang-7.0.0/
-
 script:
   - PATH="$TRAVIS_BUILD_DIR:$PATH" HYDROSPHERE_SYSROOT="${TRAVIS_BUILD_DIR}/sysroot" HYDROSPHERE_LLVM_SUFFIX="-8" make prepare-launch
 
