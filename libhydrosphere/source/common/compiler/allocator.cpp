@@ -10,99 +10,68 @@
 
 #include <stddef.h>
 
-#include "hs/hs_macro.hpp"
-#include "hs/svc/svc_api.hpp"
-
-extern void *memcpy(void *dst, const void *src, size_t len);
-extern void *memset(void *s, int c, size_t n);
-
-extern "C" __HS_ATTRIBUTE_WEAK void *sbrk(size_t increment) {
-    using namespace hs::svc;
-
-    Handle handle;  // How to initialize this?
-    size_t base_address = 0, out_address = 0;
-
-    GetInfo(&base_address, InfoType::HeapRegionBaseAddr, handle, 0);
-
-    size_t size_needed = increment - base_address;
-    size_t new_size;
-
-    // Must be a multiple of 0x200000.
-    size_t remainder = size_needed % 0x200000;
-    if (remainder != 0)
-        new_size = size_needed + 0x200000 - remainder;
-    else
-        new_size = size_needed;
-
-    SetHeapSize(&out_address, new_size);
-
-    return (void *)(&out_address - &size_needed);
+constexpr size_t MemoryAlign(size_t size, size_t alignment) {
+    return (size + alignment - 1) & ~(alignment - 1);
 }
 
-struct FreeBlock {
-    size_t size;
-    FreeBlock *next;
-};
+class MemoryAllocator {
+   public:
+    MemoryAllocator(void *start_address, size_t region_size) noexcept
+        : start_address_(start_address), region_size_(region_size) {
+        head_ = {0, nullptr};
+        used_memory_ = 0;
+    }
 
-static FreeBlock free_block_list_head = {0, nullptr};
-static const size_t align_to = 16;
+    MemoryAllocator(void *start_address, void *end_address) noexcept
+        : MemoryAllocator(
+              start_address,
+              static_cast<size_t>(static_cast<char *>(end_address) -
+                                  static_cast<char *>(start_address))) {}
 
-extern "C" __HS_ATTRIBUTE_WEAK void *malloc(size_t size) {
-    size = (size + sizeof(size_t) + (align_to - 1)) & ~(align_to - 1);
-    FreeBlock *block = free_block_list_head.next;
-    FreeBlock **head = &(free_block_list_head.next);
+    void *Allocate(size_t size, size_t alignment = 16) noexcept {
+        size = MemoryAlign(size, alignment);
 
-    while (block != nullptr) {
-        if (block->size >= size) {
-            *head = block->next;
-            return ((char *)block) + sizeof(size_t);
+        if (size + used_memory_ > region_size_) return nullptr;
+
+        MemoryBlock *block = head_.next;
+        MemoryBlock **head = &head_.next;
+
+        while (block) {
+            if (block->size >= size) {
+                *head = block->next;
+                return reinterpret_cast<char *>(block) + sizeof(size_t);
+            }
+
+            head = &block->next;
+            block = block->next;
         }
-        head = &(block->next);
-        block = block->next;
+
+        block = reinterpret_cast<MemoryBlock *>(
+            static_cast<char *>(start_address_) + used_memory_);
+        used_memory_ += size;
+        block->size = size;
+
+        return reinterpret_cast<char *>(block) + sizeof(MemoryBlock);
     }
 
-    block = (FreeBlock *)sbrk(size);
-    block->size = size;
-
-    return ((char *)block) + sizeof(size_t);
-}
-
-extern "C" __HS_ATTRIBUTE_WEAK void free(void *ptr) {
-    auto *block = (FreeBlock *)(((char *)ptr) - sizeof(size_t));
-    block->next = free_block_list_head.next;
-    free_block_list_head.next = block;
-}
-
-extern "C" __HS_ATTRIBUTE_WEAK void *calloc(size_t num, size_t nsize) {
-    size_t size;
-    void *block;
-
-    if (!num || !nsize) return nullptr;
-
-    size = num * nsize;
-    if (nsize != size / num)  // Overflow check.
-        return nullptr;
-
-    block = malloc(size);
-    if (!block) return nullptr;
-
-    memset(block, 0, size);
-    return block;
-}
-
-extern "C" __HS_ATTRIBUTE_WEAK void *realloc(void *ptr, size_t size) {
-    FreeBlock *block;
-    void *res;
-
-    if (!ptr || !size) return malloc(size);
-
-    block = (FreeBlock *)ptr - 1;
-    if (block->size >= size) return block;
-
-    res = malloc(size);
-    if (res) {
-        memcpy(res, ptr, block->size);
-        free(block);
+    void Free(void *pointer) noexcept {
+        auto block = reinterpret_cast<MemoryBlock *>(
+            static_cast<char *>(pointer) - sizeof(MemoryBlock));
+        block->next = head_.next;
+        head_.next = block;
     }
-    return res;
-}
+
+   private:
+    struct MemoryBlock {
+        size_t size;
+        MemoryBlock *next;
+    };
+
+    MemoryBlock head_;
+
+    void *start_address_;
+
+    size_t region_size_;
+
+    size_t used_memory_;
+};
