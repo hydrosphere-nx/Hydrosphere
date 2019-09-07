@@ -10,10 +10,5 @@
 
 #pragma once
 
-#include <hs/util/util_api.hpp>
-#include <hs/util/util_intrusive_list.hpp>
-#include <hs/util/util_object_storage.hpp>
-#include <hs/util/util_optional.hpp>
-#include <hs/util/util_array.hpp>
-#include <hs/util/util_std_new.hpp>
-#include <hs/util/util_template_api.hpp>
+#include <hs/os/ipc/ipc_buffer.hpp>
+#include <hs/os/ipc/ipc_tempate.hpp>

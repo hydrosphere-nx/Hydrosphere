@@ -10,10 +10,17 @@
 
 #pragma once
 
-#include <hs/util/util_api.hpp>
-#include <hs/util/util_intrusive_list.hpp>
-#include <hs/util/util_object_storage.hpp>
-#include <hs/util/util_optional.hpp>
-#include <hs/util/util_array.hpp>
-#include <hs/util/util_std_new.hpp>
-#include <hs/util/util_template_api.hpp>
+#include <stddef.h>
+#include <hs/svc/svc_types.hpp>
+
+namespace hs::os::ipc {
+
+template <size_t BufferCount = 8,
+          size_t CopyHandleCount = 8,
+          size_t MoveHandleCount = 8>
+class Message {
+ private:
+    hs::svc::Handle copy_handles[CopyHandleCount];
+    hs::svc::Handle move_handles[MoveHandleCount];
+};
+}  // namespace hs::os::ipc

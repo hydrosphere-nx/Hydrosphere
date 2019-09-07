@@ -22,5 +22,6 @@
 #include <hs/os/os_kernel_event_api.hpp>
 #include <hs/os/os_mutex_api.hpp>
 #include <hs/os/os_thread_api.hpp>
+#include <hs/os/os_ipc.hpp>
 #include <hs/os/os_types.hpp>
 #include <hs/os/os_user_event_api.hpp>
