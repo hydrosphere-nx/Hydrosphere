@@ -11,28 +11,37 @@
 #pragma once
 
 #include <stddef.h>
+#include <hs/hs_config.hpp>
+#include <hs/util/util_template_api.hpp>
 #include <hs/svc/svc_types.hpp>
 
 namespace hs::os::ipc {
 
-enum class BufferType {
-    A,
-    B,
-    W,
-    X,
-    C,
+enum BufferType {
+    BufferType_Invalid = 0,
+    BufferType_A,
+    BufferType_B,
+    BufferType_W,
+    BufferType_X,
+    BufferType_C,
 };
 
-class Buffer {
- public:
-    Buffer(BufferType type, uintptr_t address, size_t size, uint8_t flags):
-        type(type), address(address), size(size), flags(flags) {}
-
- private:
+struct Buffer {
     uintptr_t address;
-    size_t size;
-    BufferType type;
+    // The max size of a buffer is on 36 bits and we know that the retail switch only have 4GB of RAM.
+    // Therefore, it's unlikely that the user would want to tranfer a buffer of more than 4GB via IPC.
+    uint32_t size;
+    uint8_t buffer_type;
     uint8_t flags;
 };
+
+#ifdef HYDROSPHERE_TARGET_AARCH64
+static_assert(sizeof(Buffer) == 0x10, "invalid size for Buffer");
+#elif HYDROSPHERE_TARGET_AARCH32
+static_assert(sizeof(Buffer) == 0x0C, "invalid size for Buffer");
+#endif
+
+static_assert(hs::util::is_pod<Buffer>::value, "Buffer isn't pod");
+
 
 }  // namespace hs::os::ipc

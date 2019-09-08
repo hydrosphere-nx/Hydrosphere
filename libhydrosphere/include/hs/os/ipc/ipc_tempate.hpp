@@ -11,16 +11,36 @@
 #pragma once
 
 #include <stddef.h>
+#include <hs/os/ipc/ipc_buffer.hpp>
+#include <hs/util/util_array.hpp>
+#include <hs/util/util_optional.hpp>
 #include <hs/svc/svc_types.hpp>
 
 namespace hs::os::ipc {
 
-template <size_t BufferCount = 8,
-          size_t CopyHandleCount = 8,
-          size_t MoveHandleCount = 8>
-class Message {
- private:
-    hs::svc::Handle copy_handles[CopyHandleCount];
-    hs::svc::Handle move_handles[MoveHandleCount];
+// Dummy zero-sized struct
+struct EmptyRaw {
+   int dummy[0];
 };
+
+template <uint8_t BufferCount = 8,
+          uint8_t CopyHandleCount = 8,
+          uint8_t MoveHandleCount = 8,
+          typename T = EmptyRaw>
+class Message {
+ public:
+    Message() {}
+ private:
+    hs::util::Array<Buffer, BufferCount> buffers;
+    hs::util::Array<hs::svc::Handle, CopyHandleCount> copy_handles;
+    hs::util::Array<hs::svc::Handle, MoveHandleCount> move_handles;
+    uint8_t buffers_index;
+    uint8_t copy_handles_index;
+    uint8_t move_handles_index;
+    bool is_request;
+    hs::util::Optional<uint32_t> token;
+    hs::util::Optional<T> raw;
+};
+
+static_assert(sizeof(EmptyRaw) == 0, "EmptyRaw isn't a zero-sized type!");
 }  // namespace hs::os::ipc
