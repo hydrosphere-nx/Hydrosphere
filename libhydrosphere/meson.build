@@ -133,8 +133,8 @@ endif
 # TODO(Kaenbyō): find a better way of doing this
 find_program = find_program('find') 
 include_path = '@0@/include'.format(meson.current_source_dir())
-find_includes_output = run_command(find_program.path(), include_path, '-name', '*.hpp', '-printf', '%P\n')
-includes_list = find_includes_output.stdout().strip().split('\n')
+find_includes_output = run_command(find_program.path(), include_path, '-name', '*.hpp', '-printf', '%P ')
+includes_list = find_includes_output.stdout().strip().split(' ')
 all_includes = []
 foreach include : includes_list
     include_file = files('@0@/@1@'.format(include_path, include))

@@ -11,10 +11,14 @@ ifeq ($(strip $(HYDROSPHERE_SYSROOT)),)
 $(error "Please set HYDROSPHERE_SYSROOT in your environment. export HYDROSPHERE_SYSROOT=<path to>/hydrosphere")
 endif
 
+ifeq ($(strip $(HYDROSPHERE_LLVM_INSTALL_PREFIX)),)
+HYDROSPHERE_LLVM_INSTALL_PREFIX := /usr
+endif
+
 all: deploy
 
 install-helpers:
-	meson setup helper build/helper -Dhydrosphere_sysroot=$(HYDROSPHERE_SYSROOT)
+	meson setup helper build/helper -Dhydrosphere_sysroot=$(HYDROSPHERE_SYSROOT) -Dllvm_install_prefix=$(HYDROSPHERE_LLVM_INSTALL_PREFIX) -Dllvm_suffix=$(HYDROSPHERE_LLVM_SUFFIX)
 	ninja -C build/helper install
 
 build-hydrosphere-aarch64: install-helpers install-builtins install-module-runtime

@@ -34,6 +34,8 @@ else
     cdata.set('LLVM_INSTALL_PREFIX', get_option('llvm_install_prefix'))
 endif
 
+cdata.set('LLVM_SUFFIX', get_option('llvm_suffix'))
+
 datadir = join_paths(hydrosphere_datadir, 'meson', 'cross')
 
 
