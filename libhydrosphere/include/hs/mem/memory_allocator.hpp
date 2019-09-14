@@ -29,7 +29,7 @@ class MemoryAllocator {
      * \param[in] region_size The size of the memory region.
      */
     MemoryAllocator(void *start_address, size_t region_size) noexcept
-        : free_list(), start_address_(start_address),
+        : free_list_(), start_address_(start_address),
           region_size_(region_size) {
         used_memory_ = 0;
 
@@ -39,7 +39,7 @@ class MemoryAllocator {
         new (first_block) MemoryBlock();
 
         first_block->size = region_size - sizeof(MemoryBlock);
-        free_list.push_front(*first_block);
+        free_list_.push_front(*first_block);
     }
 
     /**
@@ -70,7 +70,7 @@ class MemoryAllocator {
 
         void *ptr = nullptr;
 
-        for (auto it = free_list.begin(); it != free_list.end(); ++it) {
+        for (auto it = free_list_.begin(); it != free_list_.end(); ++it) {
             // FIXME: Really really dirty, change this!
             hs::util::IntrusiveList<MemoryBlock>::const_iterator cit =
                 hs::util::IntrusiveList<MemoryBlock>::const_iterator(it);
@@ -103,11 +103,11 @@ class MemoryAllocator {
                     new (new_block) MemoryBlock();
                     new_block->size = remaining_bytes - sizeof(MemoryBlock);
 
-                    free_list.insert(cit, *new_block);
+                    free_list_.insert(cit, *new_block);
                 }
 
                 ptr = block_data_start;
-                free_list.remove(*cit);
+                free_list_.remove(*cit);
                 break;
             }
         }
@@ -126,11 +126,16 @@ class MemoryAllocator {
 
         MemoryBlock *block = GetMemoryBlockFromUserAddress(pointer);
 
+        // Invalid pointer
+        if (block == nullptr) {
+            return;
+        }
+
         // If the free list is empty, add the block to it!
-        if (free_list.empty()) {
-            free_list.push_front(*block);
+        if (free_list_.empty()) {
+            free_list_.push_front(*block);
         } else {
-            MemoryBlock *front_free_block = &free_list.front();
+            MemoryBlock *front_free_block = &free_list_.front();
 
             // If the block is before the first element of the free list
             if (front_free_block < block) {
@@ -138,18 +143,18 @@ class MemoryAllocator {
                 // the first element
                 if (block->IsJustAfterMemoryBlock(front_free_block)) {
                     block->size += front_free_block->size;
-                    free_list.remove(*front_free_block);
+                    free_list_.remove(*front_free_block);
                 }
 
-                free_list.push_front(*block);
+                free_list_.push_front(*block);
 
                 return;
             }
 
             // Search for the position to insert ourself.
-            auto target_position = free_list.cbegin();
+            auto target_position = free_list_.cbegin();
 
-            for (; target_position != free_list.cend(); ++target_position) {
+            for (; target_position != free_list_.cend(); ++target_position) {
                 const MemoryBlock *tmp = &*target_position;
                 if (tmp > block) {
                     break;
@@ -157,7 +162,7 @@ class MemoryAllocator {
             }
 
             // Insert the our block in the free list.
-            free_list.insert(target_position, *block);
+            free_list_.insert(target_position, *block);
 
             // If our block is just before the our target position, we replace
             // the first element.
@@ -165,7 +170,7 @@ class MemoryAllocator {
             // being freed.
             if (block->IsJustAfterMemoryBlock(&*target_position)) {
                 block->size += front_free_block->size;
-                free_list.erase(target_position);
+                free_list_.erase(target_position);
             }
         }
     }
@@ -189,7 +194,7 @@ class MemoryAllocator {
     static_assert(sizeof(MemoryBlock) == 0x10, "MemoryBlock size isn't right");
     #endif
 
-    hs::util::IntrusiveList<MemoryBlock> free_list;
+    hs::util::IntrusiveList<MemoryBlock> free_list_;
 
     void *start_address_;
 
@@ -202,8 +207,17 @@ class MemoryAllocator {
     }
 
     MemoryBlock *GetMemoryBlockFromUserAddress(void *pointer) noexcept {
-        return reinterpret_cast<MemoryBlock *>(
-            static_cast<char *>(pointer) - sizeof(MemoryBlock));
+        char *block_position = static_cast<char *>(pointer) -
+            sizeof(MemoryBlock);
+        char *start_address = static_cast<char *>(start_address_);
+
+        // Check the pointer sanity before accepting it
+        if (start_address_ < block_position ||
+            block_position > start_address + region_size_) {
+            return nullptr;
+        }
+
+        return reinterpret_cast<MemoryBlock *>(block_position);
     }
 };
 }  // namespace hs::mem
