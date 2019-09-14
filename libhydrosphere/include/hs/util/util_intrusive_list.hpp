@@ -459,7 +459,7 @@ class IntrusiveList {
      */
     iterator erase(const_iterator position, const_iterator last) noexcept {
         if (position == last) {
-            return last;
+            return iterator(last);
         }
 
         iterator temp = iterator(position);
@@ -490,7 +490,15 @@ class IntrusiveList {
     void splice(const_iterator position, IntrusiveList&& x,
                 const_iterator first, const_iterator last) noexcept;*/
 
-    // void remove(const T& value);
+    void remove(const T& value) {
+        const_iterator v = cbegin();
+        for (; v != cend(); ++v) {
+            if (&value == &*v) {
+                erase(v);
+                break;
+            }
+        }
+    }
     // template <class Predicate> void remove_if(Predicate pred);
 
     // maybe uneeded as we don't have the standard library.

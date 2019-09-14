@@ -10,6 +10,6 @@
 
 #pragma once
 
-#include <hs/mem/allocator.hpp>
+#include <hs/mem/memory_allocator.hpp>
 #include <hs/mem/unique_ptr.hpp>
 #include <hs/mem/shared_ptr.hpp>
