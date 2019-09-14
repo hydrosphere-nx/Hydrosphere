@@ -11,4 +11,4 @@
 #pragma once
 
 #include <hs/os/ipc/ipc_buffer.hpp>
-#include <hs/os/ipc/ipc_tempate.hpp>
+#include <hs/os/ipc/ipc_template.hpp>

@@ -64,12 +64,12 @@ class Array {
     }
 
     constexpr reference operator[](size_type n) {
-        __HS_DEBUG_ASSERT(n >= N);
+        __HS_DEBUG_ASSERT(n < N);
         return this->values[n];
     }
 
     constexpr const_reference operator[](size_type n) const {
-        __HS_DEBUG_ASSERT(n >= N);
+        __HS_DEBUG_ASSERT(n < N);
         return this->values[n];
     }
 
@@ -82,12 +82,12 @@ class Array {
     }
 
     constexpr reference at(size_type n) noexcept {
-        __HS_DEBUG_ASSERT(n >= N);
+        __HS_DEBUG_ASSERT(n < N);
         return this->values[n];
     }
 
     constexpr const_reference at(size_type n) const noexcept {
-        __HS_DEBUG_ASSERT(n >= N);
+        __HS_DEBUG_ASSERT(n < N);
         return this->values[n];
     }
 

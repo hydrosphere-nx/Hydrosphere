@@ -40,9 +40,7 @@ void secondary_thread_entrypoint(void *arg) {
     hs::os::DestroyKernelEvent(&kevent);
 }
 
-extern"C" void hsMain(void) {
-    __HS_DEBUG_LOG("Hello from hsMain");
-    __HS_DEBUG_LOG("Size: 0x%x", sizeof(hs::util::Optional<hs::svc::Handle>));
+void test_sync_primitives() {
     hs::os::Thread secondary_thread;
     hs::os::KernelEvent kevent;
     Thread2Argument argument;
@@ -73,4 +71,29 @@ extern"C" void hsMain(void) {
     hs::os::WaitThread(&secondary_thread);
     hs::os::DestroyKernelEvent(&kevent);
     hs::os::DestroyThread(&secondary_thread);
+}
+
+void test_ipc() {
+    struct test {
+        uint32_t lol;
+        uint32_t yay;
+    };
+
+    auto message = hs::os::ipc::Message<struct test, 0, 1, 1>::NewRequest(0);
+
+    test raw_data;
+
+    raw_data.lol = 0x42;
+    raw_data.yay = 0xDEAD;
+
+    message.PushCopyHandle(hs::os::GetCurrentThreadHandle());
+    message.SetRawData(raw_data);
+    __HS_ASSERT(message.GetRawData().yay == 0xDEAD);
+}
+
+extern"C" void hsMain(void) {
+    __HS_DEBUG_LOG("Hello from hsMain");
+
+    test_ipc();
+    //test_sync_primitives();
 }

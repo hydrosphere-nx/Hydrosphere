@@ -17,29 +17,24 @@
 
 namespace hs::os::ipc {
 
-enum BufferType {
-    BufferType_Invalid = 0,
-    BufferType_A,
-    BufferType_B,
-    BufferType_W,
-    BufferType_X,
-    BufferType_C,
+enum class BufferType: uint8_t {
+    Invalid = 0,
+    A,
+    B,
+    W,
+    X,
+    C,
 };
 
 struct Buffer {
-    uintptr_t address;
-    // The max size of a buffer is on 36 bits and we know that the retail switch only have 4GB of RAM.
-    // Therefore, it's unlikely that the user would want to tranfer a buffer of more than 4GB via IPC.
-    uint32_t size;
-    uint8_t buffer_type;
+    uint64_t address;
+    // NOTE: The max size of a buffer is on 36 bits.
+    uint64_t size;
+    BufferType buffer_type;
     uint8_t flags;
 };
 
-#ifdef HYDROSPHERE_TARGET_AARCH64
-static_assert(sizeof(Buffer) == 0x10, "invalid size for Buffer");
-#elif HYDROSPHERE_TARGET_AARCH32
-static_assert(sizeof(Buffer) == 0x0C, "invalid size for Buffer");
-#endif
+static_assert(sizeof(Buffer) == 0x18, "invalid size for Buffer");
 
 static_assert(hs::util::is_pod<Buffer>::value, "Buffer isn't pod");
 
