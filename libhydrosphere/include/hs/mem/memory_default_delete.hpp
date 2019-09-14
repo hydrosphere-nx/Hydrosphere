@@ -10,8 +10,15 @@
 
 #pragma once
 
-#include <hs/mem/memory_allocator.hpp>
-#include <hs/mem/memory_default_delete.hpp>
-#include <hs/mem/memory_api.hpp>
-#include <hs/mem/unique_ptr.hpp>
-#include <hs/mem/shared_ptr.hpp>
+namespace hs::mem {
+template <class T> struct default_delete {
+    // Default constructor
+    constexpr default_delete() noexcept = default;
+
+    template <class U> default_delete(const default_delete<U>& d) noexcept;
+
+    void operator()(T* ptr) const {
+        delete ptr;
+    }
+};
+}  // namespace hs::mem

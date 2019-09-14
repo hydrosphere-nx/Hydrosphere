@@ -202,7 +202,7 @@ class MemoryAllocator {
 
     size_t used_memory_;
 
-    constexpr size_t memory_align(size_t size, size_t alignment) {
+    constexpr size_t memory_align(size_t size, size_t alignment) const {
         return (size + alignment - 1) & ~(alignment - 1);
     }
 

@@ -36,4 +36,16 @@ struct integral_constant {
 template <class T>
 struct is_pod : public integral_constant<bool, __is_pod(T)> {};
 
+template< class T > struct remove_reference      {typedef T type;};
+template< class T > struct remove_reference<T&>  {typedef T type;};
+template< class T > struct remove_reference<T&&> {typedef T type;};
+
+template <class T> T&& forward(typename remove_reference<T>::type& t) noexcept {
+    return static_cast<T&&>(t);
+}
+template <class T> T&& forward(typename remove_reference<T>::type&& t)
+    noexcept {
+    return static_cast<T&&>(t);
+}
+
 }  // namespace hs::util

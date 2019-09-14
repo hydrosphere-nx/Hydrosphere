@@ -17,5 +17,5 @@ inline void* operator new(size_t, void* __p) throw() { return __p; }
 inline void* operator new[](size_t, void* __p) throw() { return __p; }
 
 // Default placement versions of operator delete.
-inline void operator delete(void*, void*)throw() {}
+inline void operator delete(void*, void*) throw() {}
 inline void operator delete[](void*, void*) throw() {}

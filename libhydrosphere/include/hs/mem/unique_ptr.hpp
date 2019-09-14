@@ -10,32 +10,46 @@
 
 #pragma once
 
+#include <hs/mem/memory_api.hpp>
+
 namespace hs::mem {
 /**
  * \short A smart pointer that owns and manages another object through a pointer
  *        and disposes of that object when the unique_ptr goes out of scope.
  */
-template <class T>
+template <class T,
+          class Deleter = hs::mem::default_delete<T>>
 class unique_ptr {
  public:
-    using element_type = T;
+    typedef T* pointer;
+    typedef T element_type;
+    typedef Deleter deleter_type;
 
     /**
      * \short Constructs a new unique_ptr from a nullptr.
      */
-    unique_ptr() noexcept : native_ptr_(nullptr) {}
+    unique_ptr() noexcept : native_ptr_(nullptr), deleter_() {}
 
     /**
      * \short Constructs a new unique_ptr given a raw pointer.
      * \param[in] ptr The pointer to be wrapped.
      */
-    explicit unique_ptr(T *ptr) noexcept : native_ptr_(ptr) {}
+    explicit unique_ptr(T *ptr) noexcept : native_ptr_(ptr), deleter_() {}
+
+    /**
+     * \short Constructs a new unique_ptr given a raw pointer.
+     * \param[in] ptr The pointer to be wrapped.
+     * \param[in] d The destructor to use when disposing of the pointer.
+     */
+    explicit unique_ptr(T *ptr, Deleter d) noexcept : native_ptr_(ptr),
+        deleter_(d) {}
 
     /**
      * \short Constructs a new unique_ptr from an existing unique_ptr.
      * \param[in] ptr The unique_ptr to use.
      */
-    unique_ptr(const unique_ptr &ptr) noexcept : native_ptr_(ptr.native_ptr_) {
+    unique_ptr(const unique_ptr &ptr) noexcept : native_ptr_(ptr.native_ptr_),
+        deleter_(ptr.deleter_) {
         const_cast<unique_ptr &>(ptr).native_ptr_ =
             nullptr;  // const_cast to force ownership transfer.
     }
@@ -63,7 +77,7 @@ class unique_ptr {
      * \short Replaces the managed object.
      * \param[in] ptr The pointer to replace the contents with.
      */
-    void reset(T *ptr) noexcept {
+    void reset(pointer ptr) noexcept {
         static_assert((nullptr == ptr) || (native_ptr_ != ptr), "");
         destroy();
         native_ptr_ = ptr;
@@ -83,8 +97,8 @@ class unique_ptr {
      * \short Returns a pointer to the managed object and releases the
      *        ownership.
      */
-    inline T *release() noexcept {
-        T *temp = native_ptr_;
+    inline pointer release() noexcept {
+        pointer temp = native_ptr_;
         native_ptr_ = nullptr;
         return temp;
     }
@@ -117,13 +131,15 @@ class unique_ptr {
     /**
      * \short Returns a pointer to the managed object.
      */
-    inline T *get() const noexcept { return native_ptr_; }
+    inline pointer get() const noexcept { return native_ptr_; }
 
  private:
-    T *native_ptr_;
+    pointer native_ptr_;
+    deleter_type deleter_;
 
     inline void destroy() noexcept {
-        delete native_ptr_;
+        deleter_(native_ptr_);
+
         native_ptr_ = nullptr;
     }
 
