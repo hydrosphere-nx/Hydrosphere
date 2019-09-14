@@ -8,6 +8,9 @@
  * except according to those terms.
  */
 
+#pragma once
+
+namespace hs::mem {
 /**
  * \short A smart pointer that owns and manages another object through a pointer
  *        and disposes of that object when the unique_ptr goes out of scope.
@@ -162,3 +165,4 @@ template <class T, class U>
 inline bool operator>(const unique_ptr<T> &l, const unique_ptr<U> &r) noexcept {
     return l.get() > r.get();
 }
+}  // namespace hs::mem

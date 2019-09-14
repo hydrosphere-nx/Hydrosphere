@@ -8,12 +8,10 @@
  * except according to those terms.
  */
 
+#pragma once
 #include <stddef.h>
 
-constexpr size_t memory_align(size_t size, size_t alignment) {
-    return (size + alignment - 1) & ~(alignment - 1);
-}
-
+namespace hs::mem {
 /**
  * \short Impelements a memory allocator that maps a given block
  *        of memory and manages it.
@@ -99,4 +97,9 @@ class MemoryAllocator {
     size_t region_size_;
 
     size_t used_memory_;
+
+    constexpr size_t memory_align(size_t size, size_t alignment) {
+        return (size + alignment - 1) & ~(alignment - 1);
+    }
 };
+}  // namespace hs::mem

@@ -19,10 +19,7 @@ assert(cc.get_id() == 'clang', 'This project only support the Clang compiler.')
 assert(meson.is_cross_build(), 'This project is supposed to be cross compiled.')
 
 common_sources = [
-    'source/common/compiler/allocator.cpp',
     'source/common/compiler/memcpy.cpp',
-    'source/common/compiler/shared_ptr.cpp',
-    'source/common/compiler/unique_ptr.cpp',
     'source/common/diag/diag_api.cpp',
     'source/common/init/initialization.cpp',
     'source/common/init/module_requirements.cpp',
@@ -124,7 +121,7 @@ else
     cdata.set('HAVE_DOT', 'NO')
     endif
 
-    subdir('doc')
+    #subdir('doc')
 endif
 
 # Extra install

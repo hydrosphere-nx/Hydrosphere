@@ -8,6 +8,9 @@
  * except according to those terms.
  */
 
+#pragma once
+
+namespace hs::mem {
 class shared_ptr_count {
  public:
     shared_ptr_count() : ref_count_(nullptr) {}
@@ -263,3 +266,4 @@ shared_ptr<T> dynamic_pointer_cast(const shared_ptr<U> &ptr) noexcept {
     else
         return shared_ptr<T>(ptr, p);
 }
+}  // namespace hs::mem
