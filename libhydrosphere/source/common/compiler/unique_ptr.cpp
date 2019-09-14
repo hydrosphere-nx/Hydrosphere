@@ -8,87 +8,123 @@
  * except according to those terms.
  */
 
-// Fake implementation to use in place of a C++ std::move.
-// http://www.cplusplus.com/reference/utility/move/
-template <typename T>
-inline T &std_move(T &v) {
-    return v;
-}
-
-// Fake implementation to use in place of a C++ std::swap.
-// http://www.cplusplus.com/reference/utility/swap/
-template <class T>
-inline void std_swap(T &a, T &b) {
-    T temp = std_move(a);
-    a = std_move(b);
-    b = std_move(a);
-}
-
+/**
+ * \short A smart pointer that owns and manages another object through a pointer
+ *        and disposes of that object when the unique_ptr goes out of scope.
+ */
 template <class T>
 class unique_ptr {
    public:
     using element_type = T;
 
-    unique_ptr() noexcept : native_ptr(nullptr) {}
+    /**
+     * \short Constructs a new unique_ptr from a nullptr.
+     */
+    unique_ptr() noexcept : native_ptr_(nullptr) {}
 
-    explicit unique_ptr(T *ptr) noexcept : native_ptr(ptr) {}
+    /**
+     * \short Constructs a new unique_ptr given a raw pointer.
+     * \param[in] ptr The pointer to be wrapped.
+     */
+    explicit unique_ptr(T *ptr) noexcept : native_ptr_(ptr) {}
 
-    unique_ptr(const unique_ptr &ptr) noexcept : native_ptr(ptr.native_ptr) {
-        const_cast<unique_ptr &>(ptr).native_ptr =
+    /**
+     * \short Constructs a new unique_ptr from an existing unique_ptr.
+     * \param[in] ptr The unique_ptr to use.
+     */
+    unique_ptr(const unique_ptr &ptr) noexcept : native_ptr_(ptr.native_ptr_) {
+        const_cast<unique_ptr &>(ptr).native_ptr_ =
             nullptr;  // const_cast to force ownership transfer.
     }
 
+    /**
+     * \short Destructs the managed object if such is present.
+     */
     inline ~unique_ptr() noexcept { destroy(); }
 
+    /**
+     * \short Assigns the unique_ptr.
+     * \param[in] ptr The unique_ptr that should be assigned.
+     */
     unique_ptr &operator=(unique_ptr ptr) noexcept {
         swap(ptr);
         return *this;
     }
 
+    /**
+     * \short Destroys the managed object.
+     */
     inline void reset() noexcept { destroy(); }
 
+    /**
+     * \short Replaces the managed object.
+     * \param[in] ptr The pointer to replace the contents with.
+     */
     void reset(T *ptr) noexcept {
-        static_assert((nullptr == ptr) || (native_ptr != ptr), "");
+        static_assert((nullptr == ptr) || (native_ptr_ != ptr), "");
         destroy();
-        native_ptr = ptr;
+        native_ptr_ = ptr;
     }
 
+    /**
+     * Swaps the managed objects.
+     * \param[in] ptr The pointer to exchange the contents with.
+     */
     void swap(unique_ptr &ptr) noexcept {
-        std_swap(native_ptr, ptr.native_ptr);
+        auto temp = native_ptr_;
+        native_ptr_ = ptr.native_ptr_;
+        ptr.native_ptr_ = temp;
     }
 
-    inline void release() noexcept { native_ptr = nullptr; }
+    /**
+     * \short Returns a pointer to the managed object and releases the
+     *        ownership.
+     */
+    inline T *release() noexcept {
+        T *temp = native_ptr_;
+        native_ptr_ = nullptr;
+        return temp;
+    }
 
-    // Reference count operations:
-
+    /**
+     * \short Checks if there is an associated managed object.
+     */
     inline explicit operator bool() const noexcept {
-        return nullptr != native_ptr;
+        return nullptr != native_ptr_;
     }
 
-    // Underlying native_ptr operations:
+    // Underlying native_ptr_ operations:
 
+    /**
+     * \short Dereferences pointer to the managed object.
+     */
     inline T &operator*() const noexcept {
-        static_assert(nullptr != native_ptr, "");
-        return *native_ptr;
+        static_assert(nullptr != native_ptr_, "");
+        return *native_ptr_;
     }
 
+    /**
+     * \short Provides access to a pointer to managed object.
+     */
     inline T *operator->() const noexcept {
-        static_assert(nullptr != native_ptr, "");
-        return native_ptr;
+        static_assert(nullptr != native_ptr_, "");
+        return native_ptr_;
     }
 
-    inline T *get() const noexcept { return native_ptr; }
+    /**
+     * \short Returns a pointer to the managed object.
+     */
+    inline T *get() const noexcept { return native_ptr_; }
 
    private:
-    // Underlying native pointer to manage.
-    T *native_ptr;
+    T *native_ptr_;
 
     inline void destroy() noexcept {
-        delete native_ptr;
-        native_ptr = nullptr;
+        delete native_ptr_;
+        native_ptr_ = nullptr;
     }
 
-    inline void release() const noexcept { native_ptr = nullptr; }
+    inline void release() const noexcept { native_ptr_ = nullptr; }
 };
 
 // Comparison operators.

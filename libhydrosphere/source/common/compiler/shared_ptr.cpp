@@ -8,141 +8,192 @@
  * except according to those terms.
  */
 
-#include <hs/hs_macro.hpp>
-
-// Fake implementation to use in place of a C++ std::move.
-// http://www.cplusplus.com/reference/utility/move/
-template <typename T>
-__HS_ATTRIBUTE_WEAK inline T &std_move(T &v) {
-    return v;
-}
-
-// Fake implementation to use in place of a C++ std::swap.
-// http://www.cplusplus.com/reference/utility/swap/
-template <class T>
-__HS_ATTRIBUTE_WEAK inline void std_swap(T &a, T &b) {
-    T temp = std_move(a);
-    a = std_move(b);
-    b = std_move(a);
-}
-
 class shared_ptr_count {
    public:
-    shared_ptr_count() : ref_count(nullptr) {}
+    shared_ptr_count() : ref_count_(nullptr) {}
 
-    shared_ptr_count(const shared_ptr_count &count)
-        : ref_count(count.ref_count) {}
+    shared_ptr_count(const shared_ptr_count &count) = default;
 
     void swap(shared_ptr_count &count) noexcept {
-        std_swap(ref_count, count.ref_count);
+        auto temp = ref_count_;
+        ref_count_ = count.ref_count_;
+        count.ref_count_ = temp;
     }
 
     long use_count() const noexcept {
-        return (ref_count != nullptr) ? *ref_count : 0;
+        return (ref_count_ != nullptr) ? *ref_count_ : 0;
     }
 
     template <class U>
     void acquire(U *ptr) {
         if (ptr == nullptr) return;
 
-        if (ref_count == nullptr)
-            ref_count = new long(1);  // may throw std::bad_alloc (?)
+        if (ref_count_ == nullptr)
+            ref_count_ = new long(1);  // may throw std::bad_alloc (?)
         else
-            ++(*ref_count);
+            ++(*ref_count_);
     }
 
     template <class U>
     void release(U *ptr) noexcept {
-        if (ref_count == nullptr) return;
+        if (ref_count_ == nullptr) return;
 
-        --(*ref_count);
-        if (*ref_count <= 0) {
+        --(*ref_count_);
+        if (*ref_count_ <= 0) {
             delete ptr;
-            delete ref_count;
+            delete ref_count_;
         }
-        ref_count = nullptr;
+        ref_count_ = nullptr;
     }
 
    private:
     // Internal reference counter.
-    long *ref_count;
+    long *ref_count_;
 };
 
+/**
+ * \short A smart pointer that retains shared ownership of an object through a
+ * pointer.
+ */
 template <class T>
 class shared_ptr {
    public:
     using element_type = T;
 
-    shared_ptr() noexcept : native_ptr(nullptr), count() {}
+    /**
+     * \short Constructs a new shared_ptr from a nullptr.
+     */
+    shared_ptr() noexcept : native_ptr_(nullptr), count_() {}
 
-    explicit shared_ptr(T *ptr) : count() { acquire(ptr); }
+    /**
+     * \short Constructs a new shared_ptr given a raw pointer.
+     * \param[in] ptr The raw pointer to manage.
+     */
+    explicit shared_ptr(T *ptr) : count_() { acquire(ptr); }
 
+    /**
+     * \short Constructs a new shared_ptr to share ownership.
+     * \param[in] ptr A shared_ptr to take the reference count from.
+     * \param[in] p The raw pointer to acquire ownership of.
+     * \warning This should only be used for pointer casts as it doesn't manage
+     *          two separate <T> and <U> pointers!
+     */
     template <class U>
-    shared_ptr(const shared_ptr<U> &ptr, T *p) : count(ptr.count) {
+    shared_ptr(const shared_ptr<U> &ptr, T *p) : count_(ptr.count_) {
         acquire(p);
     }
 
+    /**
+     * \short Constructs a new shared_ptr that converts from another pointer
+     *        type.
+     * \param[in] ptr The shared_ptr to use.
+     */
     template <class U>
-    explicit shared_ptr(const shared_ptr<U> &ptr) noexcept : count(ptr.count) {
-        static_assert(ptr.native_ptr == nullptr || ptr.count.use_count() != 0,
+    explicit shared_ptr(const shared_ptr<U> &ptr) noexcept
+        : count_(ptr.count_) {
+        static_assert(ptr.native_ptr_ == nullptr || ptr.count_.use_count() != 0,
                       "");
         acquire(static_cast<typename shared_ptr<T>::element_type *>(
-            ptr.native_ptr));
+            ptr.native_ptr_));
     }
 
-    shared_ptr(const shared_ptr &ptr) noexcept : count(ptr.count) {
-        static_assert(ptr.native_ptr == nullptr || ptr.count.use_count() != 0,
+    /**
+     * \short Constructs a new shared_ptr by the copy-and-swap idiom.
+     * \param[in] ptr The shared_ptr to use.
+     */
+    shared_ptr(const shared_ptr &ptr) noexcept : count_(ptr.count_) {
+        static_assert(ptr.native_ptr_ == nullptr || ptr.count_.use_count() != 0,
                       "");
-        acquire(ptr.native_ptr);
+        acquire(ptr.native_ptr_);
     }
 
+    /**
+     * \short Destructs the owned object if no more shared_ptrs link to it.
+     */
     inline ~shared_ptr() noexcept { release(); }
 
+    /**
+     * \short Assigns the shared_ptr.
+     * \param[in] ptr The shared_ptr that should be assigned.
+     */
     shared_ptr &operator=(shared_ptr ptr) noexcept {
         swap(ptr);
         return *this;
     }
 
+    /**
+     * \short Releases ownership of the managed object.
+     */
     inline void reset() noexcept { release(); }
 
+    /**
+     * \short Replaces the managed object.
+     * \param[in] p The pointer to replace the contents with.
+     */
     void reset(T *p) {
-        static_assert(p == nullptr || native_ptr != p, "");
+        static_assert(p == nullptr || native_ptr_ != p, "");
         release();
         acquire(p);  // May throw std::bad_alloc (?)
     }
 
+    /**
+     * \short Swaps the managed objects.
+     * \param[in] ptr The pointer to exchange the contents with.
+     */
     void swap(shared_ptr &ptr) noexcept {
-        std_swap(native_ptr, ptr.native_ptr);
-        count.swap(ptr.native_ptr);
+        auto temp = native_ptr_;
+        native_ptr_ = ptr.native_ptr_;
+        ptr.native_ptr_ = temp;
+
+        count_.swap(ptr.native_ptr_);
     }
 
     // Reference count operations:
 
-    explicit operator bool() const noexcept { return 0 < count.use_count(); }
+    /**
+     * \short Checks if the stored pointer is not null.
+     */
+    explicit operator bool() const noexcept { return 0 < count_.use_count(); }
 
-    bool unique() const noexcept { return 1 == count.use_count(); }
+    /**
+     * \short Checks whether the managed object is managed only by the current
+     *        shared_ptr instance.
+     */
+    bool unique() const noexcept { return 1 == count_.use_count(); }
 
-    long use_count() const noexcept { return count.use_count(); }
+    /**
+     * \short Returns the number of shared_ptr objects referring to the same
+     *        managed object.
+     */
+    long use_count() const noexcept { return count_.use_count(); }
 
     // Underlying pointer operations:
 
+    /**
+     * \short Dereferences the stored pointer.
+     */
     T &operator*() const noexcept {
-        static_assert(native_ptr != nullptr, "");
-        return *native_ptr;
+        static_assert(native_ptr_ != nullptr, "");
+        return *native_ptr_;
     }
 
+    /**
+     * \short Provides access to the stored pointer.
+     */
     T *operator->() const noexcept {
-        static_assert(native_ptr != nullptr, "");
-        return native_ptr;
+        static_assert(native_ptr_ != nullptr, "");
+        return native_ptr_;
     }
 
-    T *get() const noexcept { return native_ptr; }
+    /**
+     * \short Returns the stored pointer.
+     */
+    T *get() const noexcept { return native_ptr_; }
 
    private:
-    // Native pointer.
-    T *native_ptr;
-    // Reference counter.
-    shared_ptr_count count;
+    T *native_ptr_;
+
+    shared_ptr_count count_;
 
     // This allows pointer_cast functions to share the
     // reference count between different shared_ptr types.
@@ -150,13 +201,13 @@ class shared_ptr {
     friend class shared_ptr;
 
     void acquire(T *p) {
-        count.acquire(p);  // May throw std::bad_alloc (?)
-        native_ptr = p;
+        count_.acquire(p);  // May throw std::bad_alloc (?)
+        native_ptr_ = p;
     }
 
     void release() noexcept {
-        count.release(native_ptr);
-        native_ptr = nullptr;
+        count_.release(native_ptr_);
+        native_ptr_ = nullptr;
     }
 };
 
