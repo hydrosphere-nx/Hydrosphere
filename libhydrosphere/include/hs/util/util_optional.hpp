@@ -20,7 +20,7 @@ namespace hs::util {
  */
 template <typename T>
 class Optional {
-   private:
+ private:
     /**
      * \short True if the Optional contains a value.
      */
@@ -35,7 +35,7 @@ class Optional {
      */
     ObjectStorage<T, alignof(T)> value;
 
-   public:
+ public:
     constexpr explicit operator bool() const noexcept { return HasValue(); }
 
     /**

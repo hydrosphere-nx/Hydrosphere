@@ -27,11 +27,11 @@ struct DefaultIntrusiveTag;
  */
 template <class Tag = DefaultIntrusiveTag>
 class IntrusiveListElement {
-   private:
+ private:
     IntrusiveListElement* prev;
     IntrusiveListElement* next;
 
-   public:
+ public:
     IntrusiveListElement() {
         prev = this;
         next = this;
@@ -116,7 +116,7 @@ class IntrusiveListElement {
  */
 template <class T, class Tag = DefaultIntrusiveTag>
 class IntrusiveList {
-   public:
+ public:
     __HS_DISALLOW_COPY(IntrusiveList);
 
     /**
@@ -154,7 +154,7 @@ class IntrusiveList {
 
     // Define iterators implementation
     class const_iterator {
-       public:
+     public:
         friend class iterator;
         friend class IntrusiveList;
 
@@ -206,12 +206,12 @@ class IntrusiveList {
             return value != target.value;
         }
 
-       private:
+     private:
         const_pointer value;
     };
 
     class iterator {
-       public:
+     public:
         friend class const_iterator;
         friend class IntrusiveList;
 
@@ -263,7 +263,7 @@ class IntrusiveList {
             return value != target.value;
         }
 
-       private:
+     private:
         pointer value;
     };
 
@@ -503,7 +503,7 @@ class IntrusiveList {
     template <class Compare> void sort(Compare comp);
 
     void reverse() noexcept;*/
-   private:
+ private:
     IntrusiveListElement<Tag> root;
 };
 }  // namespace hs::util

@@ -18,7 +18,7 @@
 
 namespace hs::os::detail {
 class VirtualMemoryAllocator {
-   private:
+ private:
     hs::os::CriticalSection critical_section;
     uintptr_t address_space_start;
     uintptr_t address_space_end;
@@ -31,7 +31,7 @@ class VirtualMemoryAllocator {
                (target_address < end_address);
     }
 
-   public:
+ public:
     VirtualMemoryAllocator(uintptr_t address_space_start,
                            uintptr_t address_space_end,
                            size_t guard_page_size) noexcept

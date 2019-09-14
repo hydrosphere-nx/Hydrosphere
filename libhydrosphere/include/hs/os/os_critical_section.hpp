@@ -23,10 +23,10 @@ namespace hs::os {
  * \remark CriticalSection ensures mutual exclusion of access.
  */
 class CriticalSection {
-   private:
+ private:
     volatile _Atomic(uint_fast32_t) image;
 
-   public:
+ public:
     /**
      * \short Enter the critical section.
      */

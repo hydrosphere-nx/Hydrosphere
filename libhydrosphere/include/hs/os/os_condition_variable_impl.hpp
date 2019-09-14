@@ -24,10 +24,10 @@ namespace hs::os {
  * until notified to resume.
  */
 class ConditionVariableImpl {
-   private:
+ private:
     uint_fast32_t image;
 
-   public:
+ public:
     /**
      * \short Signal one.
      *

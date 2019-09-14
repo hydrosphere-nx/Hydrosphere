@@ -14,7 +14,7 @@
  */
 template <class T>
 class unique_ptr {
-   public:
+ public:
     using element_type = T;
 
     /**
@@ -116,7 +116,7 @@ class unique_ptr {
      */
     inline T *get() const noexcept { return native_ptr_; }
 
-   private:
+ private:
     T *native_ptr_;
 
     inline void destroy() noexcept {

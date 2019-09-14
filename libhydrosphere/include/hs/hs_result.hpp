@@ -22,7 +22,7 @@ class Result {
      */
     uint32_t value;
 
-   public:
+ public:
     /**
      * \short Construct a Result from a raw value.
      * \param[in] value The raw result value that defines the new Result.

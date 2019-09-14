@@ -19,7 +19,7 @@ constexpr size_t memory_align(size_t size, size_t alignment) {
  *        of memory and manages it.
  */
 class MemoryAllocator {
-   public:
+ public:
     /**
      * \short Constructs a new MemoryAllocator.
      * \param[in] start_address The start address of the memory region.
@@ -86,7 +86,7 @@ class MemoryAllocator {
         head_.next = block;
     }
 
-   private:
+ private:
     struct MemoryBlock {
         size_t size;
         MemoryBlock *next;

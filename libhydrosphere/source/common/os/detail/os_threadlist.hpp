@@ -19,12 +19,12 @@
 
 namespace hs::os::detail {
 class ThreadList {
-   private:
+ private:
     hs::os::CriticalSection critical_section;
     hs::util::IntrusiveList<hs::os::Thread> list;
     hs::os::Thread main_thread;
 
-   public:
+ public:
     explicit ThreadList(hs::svc::Handle thread_handle)
         : critical_section(), list(), main_thread() {
         main_thread.thread_handle = thread_handle;

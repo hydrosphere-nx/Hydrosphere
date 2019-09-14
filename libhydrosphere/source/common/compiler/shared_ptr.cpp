@@ -9,7 +9,7 @@
  */
 
 class shared_ptr_count {
-   public:
+ public:
     shared_ptr_count() : ref_count_(nullptr) {}
 
     shared_ptr_count(const shared_ptr_count &count) = default;
@@ -46,7 +46,7 @@ class shared_ptr_count {
         ref_count_ = nullptr;
     }
 
-   private:
+ private:
     // Internal reference counter.
     long *ref_count_;
 };
@@ -57,7 +57,7 @@ class shared_ptr_count {
  */
 template <class T>
 class shared_ptr {
-   public:
+ public:
     using element_type = T;
 
     /**
@@ -190,7 +190,7 @@ class shared_ptr {
      */
     T *get() const noexcept { return native_ptr_; }
 
-   private:
+ private:
     T *native_ptr_;
 
     shared_ptr_count count_;
