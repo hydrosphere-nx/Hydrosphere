@@ -23,14 +23,18 @@ namespace hs::os::ipc {
 
 // Dummy zero-sized struct
 struct EmptyRaw {
-  int dummy[0];
+    int dummy[0];
 };
 
 enum class MessageType : uint8_t {
-  Request = 0,
-  Response = 1,
-  Control = 2,
-  Close = 3
+    Invalid = 0,
+    LegacyRequest,
+    Close,
+    LegacyControl,
+    Request,
+    Control,
+    RequestWithContext,
+    ControlWithContext
 };
 
 template <typename T = EmptyRaw, uint8_t BufferCount = 8,

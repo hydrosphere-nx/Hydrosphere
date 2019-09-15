@@ -89,6 +89,14 @@ struct Buffer {
 
         return 2;
     }
+
+    /**
+     * \short Pack a C buffer size to the IPC region.
+     */
+    constexpr uint32_t pack_in_pointer_u16_size(uint16_t *buffer) noexcept {
+        buffer[0] = (size > 0xFFFF) ? 0 : size;
+        return 1;
+    }
 };
 
 static_assert(sizeof(Buffer) == 0x18, "invalid size for Buffer");
