@@ -58,7 +58,6 @@ class Handle {
 
 static_assert(hs::util::is_pod<Handle>::value, "Handle isn't pod");
 
-
 inline bool operator==(Handle a, Handle b) noexcept {
     return a.GetValue() == b.GetValue();
 }
@@ -113,6 +112,8 @@ enum class InterruptType {
 
 // TODO(Kaenbyō): populate this
 enum class InfoType {
+    HeapRegionBaseAddr = 4,
+    HeapRegionSize = 5,
     AddressSpaceBase = 12,
     AddressSpaceSize = 13,
     StackRegionBase = 14,

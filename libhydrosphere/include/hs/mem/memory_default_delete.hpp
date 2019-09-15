@@ -9,16 +9,16 @@
  */
 
 #pragma once
-#ifdef __aarch64__
-#define HYDROSPHERE_TARGET_ARCH_NAME aarch64
-#define HYDROSPHERE_TARGET_AARCH64 1
-#define __HS_CPU_PTR_ALIGN 0x10
-#elif __arm__
-#define HYDROSPHERE_TARGET_ARCH_NAME aarch32
-#define HYDROSPHERE_TARGET_AARCH32 1
-#define __HS_CPU_PTR_ALIGN 0x4
-#else
-#error "Cannot determine the target architecture!"
-#endif
 
-#define HYDROSPHERE_DEBUG_DIAG 1
+namespace hs::mem {
+template <class T> struct default_delete {
+    // Default constructor
+    constexpr default_delete() noexcept = default;
+
+    template <class U> default_delete(const default_delete<U>& d) noexcept;
+
+    void operator()(T* ptr) const {
+        delete ptr;
+    }
+};
+}  // namespace hs::mem

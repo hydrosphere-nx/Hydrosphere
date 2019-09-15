@@ -19,8 +19,9 @@
 namespace hs::os {
 /**
  * \short Condition Variable implementation.
- * 
- * \remark A condition variable is an object able to block the calling thread until notified to resume.
+ *
+ * \remark A condition variable is an object able to block the calling thread
+ * until notified to resume.
  */
 class ConditionVariableImpl {
  private:
@@ -29,35 +30,38 @@ class ConditionVariableImpl {
  public:
     /**
      * \short Signal one.
-     * 
+     *
      * Unblocks one of the threads currently waiting for this condition.
      */
     void Signal(void) noexcept;
 
     /**
      * \short Signal all (Broadcast).
-     * 
+     *
      * Unblocks all threads currently waiting for this condition.
      */
     void Broadcast(void) noexcept;
 
     /**
      * \short Wait until signaled.
-     * 
-     * The execution of the current thread (which shall have entered the critial section) is blocked until signaled.
+     *
+     * The execution of the current thread (which shall have entered the critial
+     * section) is blocked until signaled.
      */
     void Wait(CriticalSection *critical_section) noexcept;
 
     /**
      * \short Wait for timeout or until signaled.
-     * 
-     * The execution of the current thread (which shall have entered the critial section) is blocked during \c timeout, or until signaled (if the latter happens first).
+     *
+     * The execution of the current thread (which shall have entered the critial
+     * section) is blocked during \c timeout, or until signaled (if the latter
+     * happens first).
      */
     bool WaitTimeout(CriticalSection *critical_section,
                      int64_t timeout) noexcept;
 };
 
 static_assert(hs::util::is_pod<ConditionVariableImpl>::value,
-"ConditionVariableImpl isn't pod");
+              "ConditionVariableImpl isn't pod");
 
 }  // namespace hs::os

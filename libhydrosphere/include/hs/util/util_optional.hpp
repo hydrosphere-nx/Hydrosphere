@@ -18,7 +18,8 @@ namespace hs::util {
  * \short Obtains a POD type that manages an optional contained value.
  * \tparam T The object type that needs to be hold.
  */
-template< typename T> class Optional {
+template <typename T>
+class Optional {
  private:
     /**
      * \short True if the Optional contains a value.
@@ -35,21 +36,16 @@ template< typename T> class Optional {
     ObjectStorage<T, alignof(T)> value;
 
  public:
-    constexpr explicit operator bool() const noexcept {
-        return HasValue();
-    }
-
+    constexpr explicit operator bool() const noexcept { return HasValue(); }
 
     /**
      * \short Check whether the Optional contains a value.
-     */ 
-    constexpr bool HasValue() const noexcept {
-        return has_value;
-    }
+     */
+    constexpr bool HasValue() const noexcept { return has_value; }
 
     /**
      * \short Store the given value in the Optional.
-     * 
+     *
      * \param[in] new_value the new value to move inside the Optional.
      */
     constexpr void SetValue(T new_value) noexcept {

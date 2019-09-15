@@ -55,7 +55,7 @@ inline int SNPrintf(char *str, size_t size, const char *format, ...) noexcept {
 /**
  * \def __HS_DEBUG_LOG(...)
  * \short printf helper to hs::svc::OutputDebugString
-*/
+ */
 #define __HS_DEBUG_LOG(...)                              \
     {                                                    \
         char log_buf[0x200];                             \
@@ -66,7 +66,7 @@ inline int SNPrintf(char *str, size_t size, const char *format, ...) noexcept {
 /**
  * \def __HS_DEBUG_LOG_VARGS(...)
  * \short vprintf helper to hs::svc::OutputDebugString
-*/
+ */
 #define __HS_DEBUG_LOG_VARGS(format, va_args)                 \
     {                                                         \
         char log_buf[0x200];                                  \

@@ -45,9 +45,9 @@ void CriticalSection::Enter() noexcept {
                 continue;
             } else {
                 hs::svc::ArbitrateLock(
-                            hs::svc::Handle::FromRawValue(expected_value),
-                            reinterpret_cast<uintptr_t>(&this->image),
-                            self_thread_handle);
+                    hs::svc::Handle::FromRawValue(expected_value),
+                    reinterpret_cast<uintptr_t>(&this->image),
+                    self_thread_handle);
             }
         }
     }

@@ -24,9 +24,9 @@ class Result {
 
  public:
     /**
-    * \short Construct a Result from a raw value.
-    * \param[in] value The raw result value that defines the new Result.
-    */
+     * \short Construct a Result from a raw value.
+     * \param[in] value The raw result value that defines the new Result.
+     */
     explicit Result(uint32_t value) noexcept : value(value) {}
 
     /**
@@ -35,7 +35,8 @@ class Result {
     inline bool Ok() const noexcept { return value == Success; }
 
     /**
-     * \short Check if the raw result code value doesn't match the Result::Success value
+     * \short Check if the raw result code value doesn't match the
+     * Result::Success value
      */
     inline bool Err() const noexcept { return !Ok(); }
 

@@ -28,7 +28,7 @@ namespace hs::os {
 
 /**
  * \short This is the context of a barrier.
- * 
+ *
  * See \ref barrier_api "Barrier API" for usages.
  **/
 struct Barrier {
@@ -72,11 +72,12 @@ static_assert(hs::util::is_pod<Barrier>::value, "Barrier isn't pod");
 /**
  * \short Initialize a Barrier for \c num_to_wait participating threads.
  *
- * \remark The set of participating threads is the first \c num_to_wait threads to arrive at the synchronization point.
+ * \remark The set of participating threads is the first \c num_to_wait threads
+ * to arrive at the synchronization point.
  *
  * \param[in] barrier A pointer to a Barrier.
  * \param[in] number_to_wait The number of threads this barrier need to wait on.
- * 
+ *
  * \pre ``number_to_wait`` > 0
  * \pre ``barrier`` is uninitialized.
  * \post ``barrier`` is initialized.
@@ -87,7 +88,7 @@ void InitializeBarrier(Barrier *barrier, uint32_t number_to_wait) noexcept;
  * \short Blocks and arrive at the barrier's synchronization point.
  *
  * \param[in] barrier A pointer to a Barrier.
- * 
+ *
  * \pre ``barrier`` is initialized.
  * \post The thread arrived at the barrier's synchronization point.
  */
@@ -97,7 +98,7 @@ void AwaitBarrier(Barrier *barrier) noexcept;
  * \short Finalize a Barrier.
  *
  * \param[in] barrier A pointer to a Barrier.
- * 
+ *
  * \pre ``barrier`` is initialized.
  * \post ``barrier`` is uninitialized.
  */

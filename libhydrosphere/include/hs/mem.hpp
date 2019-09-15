@@ -9,16 +9,9 @@
  */
 
 #pragma once
-#ifdef __aarch64__
-#define HYDROSPHERE_TARGET_ARCH_NAME aarch64
-#define HYDROSPHERE_TARGET_AARCH64 1
-#define __HS_CPU_PTR_ALIGN 0x10
-#elif __arm__
-#define HYDROSPHERE_TARGET_ARCH_NAME aarch32
-#define HYDROSPHERE_TARGET_AARCH32 1
-#define __HS_CPU_PTR_ALIGN 0x4
-#else
-#error "Cannot determine the target architecture!"
-#endif
 
-#define HYDROSPHERE_DEBUG_DIAG 1
+#include <hs/mem/memory_allocator.hpp>
+#include <hs/mem/memory_default_delete.hpp>
+#include <hs/mem/memory_api.hpp>
+#include <hs/mem/unique_ptr.hpp>
+#include <hs/mem/shared_ptr.hpp>

@@ -21,6 +21,13 @@
 
 namespace hs {
 namespace svc {
+
+inline hs::Result SetHeapSize(uintptr_t *out_address,
+                              size_t heap_size) noexcept {
+    return hs::svc::HYDROSPHERE_TARGET_ARCH_NAME::SetHeapSize(out_address,
+        heap_size);
+}
+
 inline hs::Result ArbitrateLock(hs::svc::Handle owner_thread_handle,
                                 uintptr_t lock_address,
                                 hs::svc::Handle requester_handle) noexcept {

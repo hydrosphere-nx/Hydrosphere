@@ -14,9 +14,10 @@ namespace hs::util {
 /**
  * \short integral_constant wraps a static constant of specified type.
  * \remark This is a simple implementation of std::integral_constant.
- * \remark It is the base class for the C++ type traits. 
+ * \remark It is the base class for the C++ type traits.
  */
-template<class T, T v> struct integral_constant {
+template <class T, T v>
+struct integral_constant {
     static constexpr T value = v;
     typedef T value_type;
     // using injected-class-name
@@ -27,11 +28,24 @@ template<class T, T v> struct integral_constant {
 };
 
 /**
- * \short If T is a plain old data type, that is, both trivial and standard-layout, provides the member constant value equal true. For any other type, value is false.
- * \remark This is a simple implementation of std::is_pod using __is_pod from clang builtins.
+ * \short If T is a plain old data type, that is, both trivial and
+ * standard-layout, provides the member constant value equal true. For any other
+ * type, value is false. \remark This is a simple implementation of std::is_pod
+ * using __is_pod from clang builtins.
  */
-template<class T> struct is_pod : public integral_constant<bool, __is_pod(T)>
-{};
+template <class T>
+struct is_pod : public integral_constant<bool, __is_pod(T)> {};
+
+template< class T > struct remove_reference      {typedef T type;};
+template< class T > struct remove_reference<T&>  {typedef T type;};
+template< class T > struct remove_reference<T&&> {typedef T type;};
+
+template <class T> T&& forward(typename remove_reference<T>::type& t) noexcept {
+    return static_cast<T&&>(t);
+}
+template <class T> T&& forward(typename remove_reference<T>::type&& t)
+    noexcept {
+    return static_cast<T&&>(t);
+}
 
 }  // namespace hs::util
-

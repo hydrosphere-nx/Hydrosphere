@@ -21,8 +21,8 @@
 #define __HS_ATTRIBUTE_ALIGNED(align) __attribute__((aligned(align)))
 #define __HS_ASM __asm__
 
-#define __HS_DISALLOW_COPY(TypeName)   \
-    /** \private */                    \
+#define __HS_DISALLOW_COPY(TypeName) \
+    /** \private */                  \
     TypeName(const TypeName&) = delete
 #define __HS_DISALLOW_ASSIGN(TypeName) \
     /** \private */                    \

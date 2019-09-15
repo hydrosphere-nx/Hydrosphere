@@ -35,7 +35,6 @@ class ThreadLocalStorage {
      */
     static ThreadLocalStorage *GetThreadLocalStorage() noexcept;
 
-
     /**
      * Get the thread context of the current thread.
      */

@@ -9,8 +9,8 @@
  */
 
 #include <hs/diag.hpp>
-#include <hs/os/os_condition_variable_impl.hpp>
 #include <hs/os/os_api.hpp>
+#include <hs/os/os_condition_variable_impl.hpp>
 #include <hs/os/os_critical_section.hpp>
 #include <hs/svc.hpp>
 

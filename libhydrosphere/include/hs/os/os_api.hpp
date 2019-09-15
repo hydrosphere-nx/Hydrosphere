@@ -26,7 +26,6 @@ namespace hs::os {
  */
 svc::Handle GetCurrentThreadHandle() noexcept;
 
-
 /**
  * \short Get the pseudo thread handle.
  * \return The pseudo thread handle.

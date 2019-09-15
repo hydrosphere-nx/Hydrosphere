@@ -13,8 +13,8 @@
 #include <stdint.h>
 #include <hs/os/os_critical_section.hpp>
 #include <hs/svc.hpp>
-#include <hs/util/util_template_api.hpp>
 #include <hs/util/util_object_storage.hpp>
+#include <hs/util/util_template_api.hpp>
 
 namespace hs::os {
 /**
@@ -28,7 +28,7 @@ namespace hs::os {
 
 /**
  * \short This is the context of a mutex.
- * 
+ *
  * See \ref mutex_api "Mutex API" for usages.
  **/
 struct Mutex {
@@ -87,7 +87,8 @@ void InitializeMutex(Mutex *mutex, bool is_recursive) noexcept;
  * \short Lock Mutex.
  * The calling thread locks the mutex, blocking if necessary.
  *
- * \remark If the mutex wasn't initialized as recursive and if it is currently locked by the same thread calling this function, it produces a deadlock.
+ * \remark If the mutex wasn't initialized as recursive and if it is currently
+ * locked by the same thread calling this function, it produces a deadlock.
  *
  * \param[in] mutex A pointer to a Mutex.
  *
@@ -104,7 +105,8 @@ void LockMutex(Mutex *mutex) noexcept;
  * \pre ``mutex`` is initialized.
  * \post The lock was acquired or is owned by another thread.
  *
- * \return true if the function succeeds in locking the mutex for the thread. false otherwise.
+ * \return true if the function succeeds in locking the mutex for the thread.
+ * false otherwise.
  */
 bool TryLockMutex(Mutex *mutex) noexcept;
 

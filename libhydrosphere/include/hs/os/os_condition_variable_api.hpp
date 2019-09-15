@@ -28,7 +28,7 @@ namespace hs::os {
 
 /**
  * \short This is the context of a condition variable.
- * 
+ *
  * See \ref condition_variable_api "Condition Variable API" for usages.
  **/
 struct ConditionVariable {
@@ -51,7 +51,8 @@ struct ConditionVariable {
 };
 
 /**
- * \short Type that indicates whether a hs::os::WaitTimeoutConditionVariable returned because of a timeout or not.
+ * \short Type that indicates whether a hs::os::WaitTimeoutConditionVariable
+ * returned because of a timeout or not.
  */
 enum class ConditionVariableStatus {
     /**
@@ -65,10 +66,10 @@ enum class ConditionVariableStatus {
 };
 
 static_assert(sizeof(ConditionVariable) == 0x8,
-"invalid ConditionVariable size");
+              "invalid ConditionVariable size");
 
 static_assert(hs::util::is_pod<ConditionVariable>::value,
-"ConditionVariable isn't pod");
+              "ConditionVariable isn't pod");
 
 /**
  * \short Initialize a ConditionVariable.
@@ -109,12 +110,14 @@ void BroadcastConditionVariable(ConditionVariable *condvar) noexcept;
  * \param[in] mutex A pointer to a locked Mutex.
  * \param[in] timeout The number of nanoseconds before timing out.
  *
- * The execution of the current thread is blocked during ``timeout``, or until signaled (if the latter happens first).
- * \pre ``condvar`` must be initialized and ``mutex`` must be locked.
- * \post The thread was signaled and was unblocked, or, the ``timeout`` expired.
+ * The execution of the current thread is blocked during ``timeout``, or until
+ * signaled (if the latter happens first). \pre ``condvar`` must be initialized
+ * and ``mutex`` must be locked. \post The thread was signaled and was
+ * unblocked, or, the ``timeout`` expired.
  */
-ConditionVariableStatus WaitTimeoutConditionVariable(
-    ConditionVariable *condvar, Mutex *mutex, int64_t timeout) noexcept;
+ConditionVariableStatus WaitTimeoutConditionVariable(ConditionVariable *condvar,
+                                                     Mutex *mutex,
+                                                     int64_t timeout) noexcept;
 /**
  * \short Wait until signaled.
  *
@@ -125,8 +128,7 @@ ConditionVariableStatus WaitTimeoutConditionVariable(
  * \pre ``condvar`` must be initialized and ``mutex`` must be locked.
  * \post The thread was signaled and was unblocked.
  */
-void WaitConditionVariable(ConditionVariable *condvar,
-                           Mutex *mutex) noexcept;
+void WaitConditionVariable(ConditionVariable *condvar, Mutex *mutex) noexcept;
 
 /**
  * \short Finalize a ConditionVariable.

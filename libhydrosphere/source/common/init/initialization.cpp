@@ -42,7 +42,7 @@ __HS_ATTRIBUTE_VISIBILITY_HIDDEN void InitMainThread(
     tls_storage->SetThreadContext(&thread_list->GetMainThread());
 }
 
-extern"C" void hsMain(void);
+extern "C" void hsMain(void);
 
 void hs::init::Start(uint64_t thread_handle, uintptr_t argument_address,
                      void (*notify_exception_handler_ready)(),

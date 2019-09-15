@@ -14,8 +14,8 @@
 #include <hs/os/os_condition_variable_impl.hpp>
 #include <hs/os/os_critical_section.hpp>
 #include <hs/svc.hpp>
-#include <hs/util/util_template_api.hpp>
 #include <hs/util/util_optional.hpp>
+#include <hs/util/util_template_api.hpp>
 
 namespace hs::os {
 /**
@@ -30,7 +30,7 @@ namespace hs::os {
 
 /**
  * \short This is the context of a kernel event.
- * 
+ *
  * See \ref kernel_event_api "Kernel Event API" for usages.
  **/
 struct KernelEvent {
@@ -42,7 +42,8 @@ struct KernelEvent {
 
     /**
      * \private
-     * \short True if the KernelEvent must be automatically cleared after a wait operation.
+     * \short True if the KernelEvent must be automatically cleared after a wait
+     * operation.
      */
     bool is_auto_clear;
 
@@ -66,27 +67,26 @@ struct KernelEvent {
 };
 
 static_assert(sizeof(KernelEvent) == 0x14, "invalid KernelEvent size");
-static_assert(hs::util::is_pod<KernelEvent>::value,
-                "KernelEvent isn't pod");
+static_assert(hs::util::is_pod<KernelEvent>::value, "KernelEvent isn't pod");
 /**
  * \short Create a KernelEvent.
  *
  * \param[in] event A pointer to a KernelEvent.
- * \param[in] is_auto_clear True if the KernelEvent must be automatically cleared after a wait operation.
+ * \param[in] is_auto_clear True if the KernelEvent must be automatically
+ * cleared after a wait operation.
  *
  * \pre ``event`` is uninitialized.
  * \post ``event`` is initialized.
  */
-hs::Result CreateKernelEvent(KernelEvent *event,
-                             bool is_auto_clear) noexcept;
+hs::Result CreateKernelEvent(KernelEvent *event, bool is_auto_clear) noexcept;
 
 /**
  * \short Load a KernelEvent from raw handles.
- * 
+ *
  * \param[in] event A pointer to a KernelEvent.
  * \param[in] readable_handle An Optional readable handle.
  * \param[in] writable_handle An Optional writable handle.
- * 
+ *
  * \pre ``event`` is uninitialized.
  * \pre ``readable_handle`` or ``writable_handle`` contain a value.
  * \post ``event`` is initialized.
@@ -108,7 +108,7 @@ void WaitKernelEvent(KernelEvent *event) noexcept;
 
 /**
  * \short Get the signal state of a KernelEvent.
- * 
+ *
  * \param[in] event A pointer to a KernelEvent.
  * \pre ``event`` is initialized.
  * \pre ``event`` contains a readable handle.
