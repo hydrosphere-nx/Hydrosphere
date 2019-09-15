@@ -128,17 +128,17 @@ class Array {
 
     constexpr iterator end() noexcept {
         __HS_DEBUG_ASSERT(!this->empty());
-        return &this->values[N - 1];
+        return begin() + N;
     }
 
     constexpr const_iterator end() const noexcept {
         __HS_DEBUG_ASSERT(!this->empty());
-        return &this->values[N - 1];
+        return begin() + N;
     }
 
     constexpr const_iterator cend() const noexcept {
         __HS_DEBUG_ASSERT(!this->empty());
-        return &this->values[N - 1];
+        return cbegin() + N;
     }
 };
 }  // namespace hs::util

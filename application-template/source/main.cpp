@@ -79,7 +79,7 @@ void test_ipc() {
         uint32_t yay;
     };
 
-    auto message = hs::os::ipc::Message<struct test, 0, 1, 1>::NewRequest(0);
+    auto message = hs::os::ipc::Message<struct test, 1, 1, 1>::NewRequest(0);
 
     test raw_data;
 
@@ -88,7 +88,14 @@ void test_ipc() {
 
     message.PushCopyHandle(hs::os::GetCurrentThreadHandle());
     message.SetRawData(raw_data);
+    message.PushOutBuffer(&raw_data);
     __HS_ASSERT(message.GetRawData().yay == 0xDEAD);
+
+    auto tmp = message.PopOutBuffer<test>();
+    __HS_ASSERT(tmp->yay == 0xDEAD);
+
+    tmp = message.PopOutBuffer<test>();
+    __HS_ASSERT(tmp == nullptr);    
 }
 
 extern"C" void hsMain(void) {

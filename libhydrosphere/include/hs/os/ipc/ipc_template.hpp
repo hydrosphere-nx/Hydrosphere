@@ -145,7 +145,166 @@ class Message {
         pid.SetValue(fake_pid);
     }
 
-    // TODO(Kaenbyō): buffers helpers
+    /**
+     * \short Push data as an out buffer (type-A buffer).
+     */
+    template <typename BufferT>
+    void PushOutBuffer(BufferT *data, uint8_t flags = 0) {
+        PushOutBufferArray(data, 1, flags);
+    }
+
+    /**
+     * \short Push an array as an out buffer (type-A buffer).
+     */
+    template <typename BufferT>
+    void PushOutBufferArray(BufferT *elements, size_t elements_count,
+        uint8_t flags = 0) {
+        PushBufferArray(elements, elements_count, BufferType::A, flags);
+    }
+
+    /**
+     * \short Retreive the next out buffer (type-A buffer) in the message.
+     */
+    template <typename BufferT>
+    BufferT *PopOutBuffer() {
+        BufferT *res = nullptr;
+
+        size_t n = PopOutBufferArray(&res);
+        if (n != 1) {
+            return nullptr;
+        }
+
+        return res;
+    }
+
+    /**
+     * \short Retreive the next out buffer (type-A buffer) in the message as an array.
+     */
+    template <typename BufferT>
+    constexpr size_t PopOutBufferArray(BufferT **buffer_ptr) {
+        return PopBuffer(BufferType::A, buffer_ptr);
+    }
+
+    /**
+     * \short Push data as an in buffer (type-B buffer).
+     */
+    template <typename BufferT>
+    void PushInBuffer(BufferT *data, uint8_t flags = 0) {
+        PushInBufferArray(data, 1, flags);
+    }
+
+    /**
+     * \short Push an array as an in buffer (type-B buffer).
+     */
+    template <typename BufferT>
+    void PushInBufferArray(BufferT *elements, size_t elements_count,
+        uint8_t flags = 0) {
+        PushBufferArray(elements, elements_count, BufferType::B, flags);
+    }
+
+    /**
+     * \short Retreive the next in buffer (type-B buffer) in the message.
+     */
+    template <typename BufferT>
+    BufferT *PopInBuffer() {
+        BufferT *res = nullptr;
+
+        size_t n = PopInBufferArray(&res);
+        if (n != 1) {
+            return nullptr;
+        }
+
+        return res;
+    }
+
+    /**
+     * \short Retreive the next in buffer (type-B buffer) in the message as an array.
+     */
+    template <typename BufferT>
+    constexpr size_t PopInBufferArray(BufferT **buffer_ptr) {
+        return PopBuffer(BufferType::B, buffer_ptr);
+    }
+
+    /**
+     * \short Push data as an out pointer (type-X buffer).
+     */
+    template <typename BufferT>
+    void PushOutPointer(BufferT *data, uint8_t flags = 0) {
+        PushOutPointerArray(data, 1, flags);
+    }
+
+    /**
+     * \short Push an array as an out pointer (type-X buffer).
+     */
+    template <typename BufferT>
+    void PushOutPointerArray(BufferT *elements, size_t elements_count,
+        uint8_t flags = 0) {
+        PushBufferArray(elements, elements_count, BufferType::X, flags);
+    }
+
+    /**
+     * \short Retreive the next out pointer (type-X buffer) in the message.
+     */
+    template <typename BufferT>
+    BufferT *PopOutPointer() {
+        BufferT *res = nullptr;
+
+        size_t n = PopOutPointerArray(&res);
+        if (n != 1) {
+            return nullptr;
+        }
+
+        return res;
+    }
+
+    /**
+     * \short Retreive the next out pointer (type-X buffer) in the message as an array.
+     */
+    template <typename BufferT>
+    constexpr size_t PopOutPointerArray(BufferT **buffer_ptr) {
+        return PopBuffer(BufferType::X, buffer_ptr);
+    }
+
+    /**
+     * \short Push data as an in pointer (type-C buffer).
+     */
+    template <typename BufferT>
+    void PushInPointer(BufferT *data, uint8_t flags = 0) {
+        PushInPointerArray(data, 1, flags);
+    }
+
+    /**
+     * \short Push an array as an in pointer (type-C buffer).
+     */
+    template <typename BufferT>
+    void PushInPointerArray(BufferT *elements, size_t elements_count,
+        uint8_t flags = 0) {
+        PushBufferArray(elements, elements_count, BufferType::C, flags);
+    }
+
+    /**
+     * \short Retreive the next in pointer (type-C buffer) in the message.
+     */
+    template <typename BufferT>
+    BufferT *PopInPointer() {
+        BufferT *res = nullptr;
+
+        size_t n = PopInPointerArray(&res);
+        if (n != 1) {
+            return nullptr;
+        }
+
+        return res;
+    }
+
+    /**
+     * \short Retreive the next in pointer (type-C buffer) in the message as an array.
+     */
+    template <typename BufferT>
+    constexpr size_t PopInPointerArray(BufferT **buffer_ptr) {
+        return PopBuffer(BufferType::C, buffer_ptr);
+    }
+
 
     // TODO(Kaenbyō): pack & unpack
 
@@ -168,19 +327,57 @@ class Message {
     hs::util::Optional<T> raw;
     hs::util::Optional<uint32_t> pid;
 
-    void PushBuffer(Buffer buffer) {
-      __HS_DEBUG_ASSERT(buffers_index < BufferCount);
-      buffers[buffers_index++] = buffer;
+    template <typename BufferT>
+    constexpr void PushBufferArray(BufferT *elements, size_t elements_count,
+        BufferType buffer_type, uint8_t flags) {
+        __HS_DEBUG_ASSERT(elements_count != 0);
+
+        Buffer buffer;
+
+        buffer.buffer_type = buffer_type;
+        buffer.flags = flags;
+        buffer.address = reinterpret_cast<uint64_t>(elements);
+        buffer.size = sizeof(T) * elements_count;
+
+        PushBuffer(buffer);
+    }
+
+    constexpr void PushBuffer(Buffer &buffer) {
+        __HS_DEBUG_ASSERT(buffers_index < BufferCount);
+        buffers[buffers_index++] = buffer;
+    }
+
+    template <typename BufferT>
+    size_t PopBuffer(BufferType type, BufferT **buffer_ptr) {
+        *buffer_ptr = nullptr;
+        size_t buffer_count = 0;
+
+        Buffer *buffer = PopBufferByType(type);
+        if (buffer != nullptr) {
+            __HS_DEBUG_ASSERT(buffer->size % sizeof(BufferT) != 0);
+
+            // If the size is a multiple of sizeof(BufferT)
+            if (buffer->size % sizeof(BufferT) == 0) {
+                buffer_count = buffer->size / sizeof(BufferT);
+                *buffer_ptr = reinterpret_cast<BufferT*>(buffer->address);
+            }
+        }
+
+        return buffer_count;
     }
 
     Buffer *PopBufferByType(BufferType type) {
-      for (auto buffer : this->buffers) {
-        if (buffer.buffer_type == type) {
-          return &buffer;
+        for (size_t i = 0; i < buffers.size(); i++) {
+            Buffer *buffer = &buffers[i];
+            if (buffer->buffer_type == type) {
+                // we change the buffer_type to Invalid to make sure we don't
+                // get the buffer back again.
+                buffer->buffer_type = BufferType::Invalid;
+                return buffer;
+            }
         }
-      }
 
-      return nullptr;
+        return nullptr;
     }
 };
 
