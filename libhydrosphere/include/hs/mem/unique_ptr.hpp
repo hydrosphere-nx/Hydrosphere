@@ -37,7 +37,7 @@ class unique_ptr {
     explicit unique_ptr(T *ptr) noexcept : native_ptr_(ptr), deleter_() {}
 
     /**
-     * \short Constructs a new unique_ptr given a raw pointer.
+     * \short Constructs a new unique_ptr given a raw pointer and a destructor.
      * \param[in] ptr The pointer to be wrapped.
      * \param[in] d The destructor to use when disposing of the pointer.
      */
@@ -78,7 +78,6 @@ class unique_ptr {
      * \param[in] ptr The pointer to replace the contents with.
      */
     void reset(pointer ptr) noexcept {
-        static_assert((nullptr == ptr) || (native_ptr_ != ptr), "");
         destroy();
         native_ptr_ = ptr;
     }
@@ -116,7 +115,6 @@ class unique_ptr {
      * \short Dereferences pointer to the managed object.
      */
     inline T &operator*() const noexcept {
-        static_assert(nullptr != native_ptr_, "");
         return *native_ptr_;
     }
 
@@ -124,7 +122,6 @@ class unique_ptr {
      * \short Provides access to a pointer to managed object.
      */
     inline T *operator->() const noexcept {
-        static_assert(nullptr != native_ptr_, "");
         return native_ptr_;
     }
 

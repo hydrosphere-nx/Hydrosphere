@@ -121,7 +121,7 @@ else
     cdata.set('HAVE_DOT', 'NO')
     endif
 
-    #subdir('doc')
+    subdir('doc')
 endif
 
 # Extra install

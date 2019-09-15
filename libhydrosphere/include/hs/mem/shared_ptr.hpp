@@ -10,17 +10,32 @@
 
 #pragma once
 
+#include <hs/mem/memory_api.hpp>
+
+#include <hs/diag/diag_macro.hpp>
+#include <hs/util/util_api.hpp>
+
 namespace hs::mem {
+template <class DeleterRefCount>
 class shared_ptr_count {
  public:
-    shared_ptr_count() : ref_count_(nullptr) {}
+    shared_ptr_count(long *ref_count, DeleterRefCount &d) :
+        ref_count_(ref_count), deleter_ref_count_(d) {
+        if (ref_count_ != nullptr) {
+            *ref_count_ = 0;
+        }
+    }
 
-    shared_ptr_count(const shared_ptr_count &count) = default;
+    shared_ptr_count(const shared_ptr_count<DeleterRefCount> &count) = default;
 
-    void swap(shared_ptr_count &count) noexcept {
+    void swap(shared_ptr_count<DeleterRefCount> &count) noexcept {
         auto temp = ref_count_;
         ref_count_ = count.ref_count_;
         count.ref_count_ = temp;
+
+        auto temp_deleter = deleter_ref_count_;
+        deleter_ref_count_ = count.deleter_ref_count_;
+        count.deleter_ref_count_ = deleter_ref_count_;
     }
 
     long use_count() const noexcept {
@@ -31,20 +46,22 @@ class shared_ptr_count {
     void acquire(U *ptr) {
         if (ptr == nullptr) return;
 
+        // If the ref_count isn't allocated, we are always sure that we don't
+        // have some custom allocator so we use the standard new.
         if (ref_count_ == nullptr)
             ref_count_ = new long(1);  // may throw std::bad_alloc (?)
         else
             ++(*ref_count_);
     }
 
-    template <class U>
-    void release(U *ptr) noexcept {
+    template <class D, class U>
+    void release(D &deleter, U *ptr) noexcept {
         if (ref_count_ == nullptr) return;
 
         --(*ref_count_);
         if (*ref_count_ <= 0) {
-            delete ptr;
-            delete ref_count_;
+            deleter(ptr);
+            deleter_ref_count_(ref_count_);
         }
         ref_count_ = nullptr;
     }
@@ -52,27 +69,58 @@ class shared_ptr_count {
  private:
     // Internal reference counter.
     long *ref_count_;
+    DeleterRefCount &deleter_ref_count_;
 };
 
 /**
  * \short A smart pointer that retains shared ownership of an object through a
  * pointer.
  */
-template <class T>
+template <class T,
+          class Deleter = hs::mem::default_delete<T>,
+          class DeleterRefCount = hs::mem::default_delete<long>>
 class shared_ptr {
  public:
-    using element_type = T;
+    typedef T* pointer;
+    typedef T element_type;
+    typedef Deleter deleter_type;
 
     /**
      * \short Constructs a new shared_ptr from a nullptr.
      */
-    shared_ptr() noexcept : native_ptr_(nullptr), count_() {}
+    shared_ptr() noexcept : native_ptr_(nullptr), deleter_(), count_(nullptr) {}
 
     /**
      * \short Constructs a new shared_ptr given a raw pointer.
      * \param[in] ptr The raw pointer to manage.
      */
-    explicit shared_ptr(T *ptr) : count_() { acquire(ptr); }
+    explicit shared_ptr(pointer ptr) : deleter_(), count_(nullptr) {
+        acquire(ptr);
+    }
+
+    /**
+     * \short Constructs a new shared_ptr given a raw pointer and a destructor.
+     * \param[in] ptr The raw pointer to manage.
+     * \param[in] d The destructor to use when disposing of the pointer.
+     */
+    explicit shared_ptr(pointer ptr, Deleter d)
+        : deleter_(d), count_(nullptr) {
+            acquire(ptr);
+    }
+
+    /**
+     * \short Constructs a new shared_ptr given a raw pointer, a destructor and an allocator.
+     * \param[in] ptr The raw pointer to manage.
+     * \param[in] d The destructor to use when disposing of the pointer.
+     * \param[in] d2 The destructor to use when disposing of the refcount.
+     * \param[in] alloc The allocator to use when allocating the refcount.
+     */
+    template <class Alloc>
+    shared_ptr(pointer ptr, Deleter d, DeleterRefCount d2, Alloc &alloc)
+        : deleter_(d),
+        count_(reinterpret_cast<long *>(alloc.Allocate(sizeof(long))), d2) {
+            acquire(ptr);
+        }
 
     /**
      * \short Constructs a new shared_ptr to share ownership.
@@ -82,7 +130,8 @@ class shared_ptr {
      *          two separate <T> and <U> pointers!
      */
     template <class U>
-    shared_ptr(const shared_ptr<U> &ptr, T *p) : count_(ptr.count_) {
+    shared_ptr(const shared_ptr<U> &ptr, pointer p)
+        : deleter_(ptr.deleter_), count_(ptr.count_) {
         acquire(p);
     }
 
@@ -93,20 +142,17 @@ class shared_ptr {
      */
     template <class U>
     explicit shared_ptr(const shared_ptr<U> &ptr) noexcept
-        : count_(ptr.count_) {
-        static_assert(ptr.native_ptr_ == nullptr || ptr.count_.use_count() != 0,
-                      "");
+        : deleter_(ptr.deleter_), count_(ptr.count_) {
         acquire(static_cast<typename shared_ptr<T>::element_type *>(
             ptr.native_ptr_));
     }
 
     /**
-     * \short Constructs a new shared_ptr by the copy-and-swap idiom.
+     * \short Constructs a new sàhared_ptr by the copy-and-swap idiom.
      * \param[in] ptr The shared_ptr to use.
      */
-    shared_ptr(const shared_ptr &ptr) noexcept : count_(ptr.count_) {
-        static_assert(ptr.native_ptr_ == nullptr || ptr.count_.use_count() != 0,
-                      "");
+    shared_ptr(const shared_ptr &ptr) noexcept
+        : deleter_(ptr.deleter_), count_(ptr.count_) {
         acquire(ptr.native_ptr_);
     }
 
@@ -133,8 +179,7 @@ class shared_ptr {
      * \short Replaces the managed object.
      * \param[in] p The pointer to replace the contents with.
      */
-    void reset(T *p) {
-        static_assert(p == nullptr || native_ptr_ != p, "");
+    void reset(pointer p) {
         release();
         acquire(p);  // May throw std::bad_alloc (?)
     }
@@ -176,7 +221,6 @@ class shared_ptr {
      * \short Dereferences the stored pointer.
      */
     T &operator*() const noexcept {
-        static_assert(native_ptr_ != nullptr, "");
         return *native_ptr_;
     }
 
@@ -184,32 +228,33 @@ class shared_ptr {
      * \short Provides access to the stored pointer.
      */
     T *operator->() const noexcept {
-        static_assert(native_ptr_ != nullptr, "");
         return native_ptr_;
     }
 
     /**
      * \short Returns the stored pointer.
      */
-    T *get() const noexcept { return native_ptr_; }
+    pointer get() const noexcept { return native_ptr_; }
 
  private:
-    T *native_ptr_;
+    pointer native_ptr_;
+    deleter_type deleter_;
 
-    shared_ptr_count count_;
+    shared_ptr_count<DeleterRefCount> count_;
+
 
     // This allows pointer_cast functions to share the
     // reference count between different shared_ptr types.
-    template <class U>
+    template <class U, class D, class D2>
     friend class shared_ptr;
 
-    void acquire(T *p) {
+    void acquire(pointer p) {
         count_.acquire(p);  // May throw std::bad_alloc (?)
         native_ptr_ = p;
     }
 
     void release() noexcept {
-        count_.release(native_ptr_);
+        count_.release(deleter_, native_ptr_);
         native_ptr_ = nullptr;
     }
 };
